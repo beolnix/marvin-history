@@ -1,0 +1,163 @@
+apply plugin: 'java'
+apply plugin: 'groovy'
+apply plugin: 'idea'
+apply plugin: 'org.sonarqube'
+apply plugin: 'jacoco'
+
+def JAVA_VERSION = '1.8'
+def JACOCO_TOOL_VERSION = '0.7.1.201405082137'
+
+ext.SPRING_BOOT_VERSION = '1.3.2.RELEASE'
+ext.LOMBOK_VERSION = '1.16.6'
+ext.JAVA_VERSION = JAVA_VERSION
+ext.GROOVY_VERSION = '2.4.4'
+
+sourceCompatibility = JAVA_VERSION
+targetCompatibility = JAVA_VERSION
+System.setProperty("file.encoding", "UTF-8")
+
+def version = '0.1.0'
+
+buildscript {
+    repositories {
+        maven {
+            url "http://repo1.maven.org/maven2/"
+        }
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+        mavenLocal()
+    }
+    dependencies {
+        classpath 'org.sonarqube.gradle:gradle-sonarqube-plugin:1.0'
+        classpath "org.ajoberstar:gradle-jacoco:0.1.0"
+    }
+}
+
+sonarqube {
+    properties {
+        property "sonar.projectName", "marvin-history"
+        property "sonar.projectKey", "marvin-history"
+    }
+}
+
+configurations.all {
+    // check for updates every build
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+}
+
+repositories {
+    maven {
+        url "http://nexus.beolnix.com/content/repositories/releases/"
+    }
+    maven {
+        url "http://nexus.beolnix.com/content/repositories/snapshots/"
+    }
+    mavenCentral()
+    mavenLocal()
+
+}
+
+dependencies {
+
+    compile project(':history-service')
+    compile project(':history-service-api')
+
+}
+
+test {
+    ignoreFailures = true
+}
+
+subprojects {
+    buildscript {
+        repositories {
+            maven {
+                url "http://repo1.maven.org/maven2/"
+            }
+            maven {
+                url "https://plugins.gradle.org/m2/"
+            }
+            jcenter()
+            mavenLocal()
+        }
+        dependencies {
+            classpath "org.sonarqube.gradle:gradle-sonarqube-plugin:1.0"
+            classpath "org.ajoberstar:gradle-jacoco:0.1.0"
+        }
+    }
+
+    sourceCompatibility = JAVA_VERSION
+    targetCompatibility = JAVA_VERSION
+    System.setProperty("file.encoding", "UTF-8")
+
+    apply plugin: 'idea'
+    apply plugin: 'groovy'
+    apply plugin: 'java'
+    apply plugin: 'maven'
+    apply plugin: 'jacoco'
+
+    project.group = 'com.beolnix.marvin'
+    project.version = version
+
+    jacoco {
+        toolVersion = JACOCO_TOOL_VERSION
+        reportsDir = file("$buildDir/customJacocoReportDir")
+    }
+
+    sonarqube {
+        properties {
+            property "sonar.projectName", "$project.name"
+        }
+    }
+
+    repositories {
+        maven {
+            url "http://nexus.beolnix.com/content/repositories/releases/"
+        }
+        maven {
+            url "http://nexus.beolnix.com/content/repositories/snapshots/"
+        }
+        mavenCentral()
+        mavenLocal()
+
+    }
+
+    uploadArchives {
+        repositories {
+            mavenDeployer {
+                pom.groupId = project.group
+                pom.artifactId = project.name
+                pom.version = version
+
+                if (version.toString().endsWith("SNAPSHOT")) {
+                    repository(url: "http://nexus.beolnix.com/content/repositories/snapshots/") {
+                        authentication(userName: System.getenv()['REPO_USER'], password: System.getenv()['REPO_SNAPSHOT_PASSWORD'])
+                    }
+                } else {
+                    repository(url: "http://nexus.beolnix.com/content/repositories/releases/") {
+                        authentication(userName: System.getenv()['REPO_USER'], password: System.getenv()['REPO_RELEASE_PASSWORD'])
+                    }
+                }
+            }
+        }
+    }
+
+    configurations { provided }
+
+    sourceSets {
+        main { compileClasspath += configurations.provided }
+    }
+
+    dependencies {
+        compile "org.codehaus.groovy:groovy-all:${GROOVY_VERSION}"
+    }
+
+    test {
+        ignoreFailures = true
+        jacoco {
+            append = false
+        }
+    }
+
+}
