@@ -5,10 +5,12 @@ import com.beolnix.marvin.history.api.ChatApi;
 import com.beolnix.marvin.history.api.model.ChatDTO;
 import com.beolnix.marvin.history.api.model.CreateChatDTO;
 
+import com.beolnix.marvin.history.service.ChatService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
@@ -20,31 +22,33 @@ import java.util.List;
 @RestController
 public class ChatController implements ChatApi {
 
+    public final ChatService chatService;
+
+    @Autowired
+    public ChatController(ChatService chatService) {
+        this.chatService = chatService;
+    }
+
     @Override
     public List<ChatDTO> getAllChats() {
-        return null;
+        return chatService.getChats();
     }
 
 
     @Override
-    public ChatDTO getChatByName(@ApiParam("name of the chat.") @PathVariable("name") String name) {
-        ChatDTO chatDTO = new ChatDTO();
-        chatDTO.setName(name);
-        return chatDTO;
+    public ChatDTO getChatByName(@ApiParam("name of the chat.") @PathVariable("name")String name) {
+        return chatService.getChatByName(name);
     }
 
-    @ApiOperation("Method returns chat by id.")
+
+
     @Override
     public ChatDTO getChatById(@ApiParam("id of the chat.") @PathVariable("id") Long id) {
-        ChatDTO chatDTO = new ChatDTO();
-        chatDTO.setName("testname");
-        chatDTO.setId(id);
-        return chatDTO;
+        return chatService.getChatById(id);
     }
 
-    @ApiOperation("Method creates new chat based on provided model.")
     @Override
-    public void createChat(@RequestBody CreateChatDTO createChatDTO) {
-
+    public ChatDTO createChat(@RequestBody CreateChatDTO createChatDTO) {
+        return chatService.createChat(createChatDTO);
     }
 }

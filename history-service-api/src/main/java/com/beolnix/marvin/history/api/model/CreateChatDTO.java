@@ -41,10 +41,6 @@ public class CreateChatDTO {
     }
 
     public void setConference(Boolean conference) {
-        conference = conference;
-    }
-
-    public Boolean isConference() {
-        return conference;
+        this.conference = conference;
     }
 }

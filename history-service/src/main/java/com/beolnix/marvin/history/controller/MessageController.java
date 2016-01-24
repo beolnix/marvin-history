@@ -4,15 +4,21 @@ import com.beolnix.marvin.history.api.MessageApi;
 import com.beolnix.marvin.history.api.model.CreateMessageDTO;
 import com.beolnix.marvin.history.api.model.MessageDTO;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 /**
  * Created by beolnix on 23/01/16.
  */
+
+@RestController
 public class MessageController  implements MessageApi {
     @Override
-    public List<MessageDTO> getMessages(@RequestParam(value = "chatId", required = true) Long chatId, @RequestParam(value = "toMessageId", required = false) Long fromMessageId, @RequestParam(value = "fromDateTime", required = false) String fromDateTime, @RequestParam(value = "toDateTime", required = false) String toDateTime) {
+    public List<MessageDTO> getMessages(Long chatId,
+                                        Long fromMessageId,
+                                        String fromDateTime,
+                                        String toDateTime) {
         return null;
     }
 

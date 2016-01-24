@@ -37,7 +37,7 @@ public interface ChatApi {
     @ApiOperation("Method creates new chat based on provided model.")
     @ApiResponses(value = { @ApiResponse(code = 400, message = "Bad request") })
     @RequestMapping(method = RequestMethod.POST, value = "/chats")
-    void createChat(
+    ChatDTO createChat(
             @RequestBody CreateChatDTO createChatDTO
     );
 }
