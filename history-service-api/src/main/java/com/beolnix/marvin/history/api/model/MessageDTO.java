@@ -2,7 +2,9 @@ package com.beolnix.marvin.history.api.model;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -21,8 +23,9 @@ public class MessageDTO {
     @ApiModelProperty("Message autor")
     private String autor;
 
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @ApiModelProperty("Date and Time of the message")
-    private Date timestamp;
+    private LocalDateTime timestamp;
 
     @ApiModelProperty("Text of the message")
     private String msg;
@@ -51,11 +54,11 @@ public class MessageDTO {
         this.autor = autor;
     }
 
-    public Date getTimestamp() {
+    public LocalDateTime getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(Date timestamp) {
+    public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
     }
 

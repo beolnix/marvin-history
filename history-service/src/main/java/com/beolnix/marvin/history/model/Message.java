@@ -1,6 +1,7 @@
 package com.beolnix.marvin.history.model;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -19,19 +20,51 @@ public class Message {
     private Long chatId;
 
     @Column
-    private String from;
+    private String autor;
 
     @Column
-    private Date timestamp;
+    private LocalDateTime timestamp;
 
     @Column
     private String msg;
 
-    public Message(Long id, Long chatId, String from, Date timestamp, String msg) {
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getChatId() {
+        return chatId;
+    }
+
+    public void setChatId(Long chatId) {
         this.chatId = chatId;
-        this.from = from;
+    }
+
+    public String getAutor() {
+        return autor;
+    }
+
+    public void setAutor(String autor) {
+        this.autor = autor;
+    }
+
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public void setMsg(String msg) {
         this.msg = msg;
     }
 }

@@ -3,9 +3,20 @@ package com.beolnix.marvin.history.controller;
 import com.beolnix.marvin.history.api.MessageApi;
 import com.beolnix.marvin.history.api.model.CreateMessageDTO;
 import com.beolnix.marvin.history.api.model.MessageDTO;
+import com.beolnix.marvin.history.error.BadRequest;
+import com.beolnix.marvin.history.model.Message;
+import com.beolnix.marvin.history.service.MessageService;
+import io.swagger.annotations.ApiParam;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -13,17 +24,34 @@ import java.util.List;
  */
 
 @RestController
-public class MessageController  implements MessageApi {
-    @Override
-    public List<MessageDTO> getMessages(Long chatId,
-                                        Long fromMessageId,
-                                        String fromDateTime,
-                                        String toDateTime) {
-        return null;
+public class MessageController implements MessageApi {
+
+    private final MessageService messageService;
+
+    @Autowired
+    public MessageController(MessageService messageService) {
+        this.messageService = messageService;
     }
 
     @Override
-    public void createMessate(CreateMessageDTO createMessageDTO) {
+    public Page<MessageDTO> getMessages(@RequestParam(value = "chatId", required = true) Long chatId,
 
+                                        @RequestParam(value = "toMessageId", required = false) Long toMessageId,
+
+                                        @RequestParam(value = "fromDateTime", required = false)
+                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                        LocalDateTime fromDateTime,
+
+                                        @RequestParam(value = "toDateTime", required = false)
+                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                        LocalDateTime toDateTime,
+
+                                        Pageable pageable) {
+        return messageService.getMessages(chatId, toMessageId, fromDateTime, toDateTime, pageable);
+    }
+
+    @Override
+    public MessageDTO createMessate(@RequestBody CreateMessageDTO createMessageDTO) {
+        return messageService.createMessate(createMessageDTO);
     }
 }

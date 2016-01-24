@@ -36,14 +36,12 @@ public class ChatController implements ChatApi {
 
 
     @Override
-    public ChatDTO getChatByName(@ApiParam("name of the chat.") @PathVariable("name")String name) {
+    public ChatDTO getChatByName(@PathVariable("name")String name) {
         return chatService.getChatByName(name);
     }
 
-
-
     @Override
-    public ChatDTO getChatById(@ApiParam("id of the chat.") @PathVariable("id") Long id) {
+    public ChatDTO getChatById(@PathVariable("id") Long id) {
         return chatService.getChatById(id);
     }
 
