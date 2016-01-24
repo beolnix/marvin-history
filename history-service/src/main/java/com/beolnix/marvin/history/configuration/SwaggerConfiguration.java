@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.request.async.DeferredResult;
 
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.builders.ResponseMessageBuilder;
@@ -43,7 +44,7 @@ public class SwaggerConfiguration {
     private TypeResolver typeResolver;
 
     @Bean
-    public Docket petApi() {
+    public Docket historyApi() {
         return new Docket(DocumentationType.SWAGGER_2).select().apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build().pathMapping("/")
                 .directModelSubstitute(LocalDate.class, String.class).genericModelSubstitutes(ResponseEntity.class)
                 .alternateTypeRules(newRule(typeResolver.resolve(DeferredResult.class, typeResolver.resolve(ResponseEntity.class, WildcardType.class)), typeResolver.resolve(WildcardType.class)))
@@ -69,10 +70,7 @@ public class SwaggerConfiguration {
         return newArrayList(new SecurityReference("mykey", authorizationScopes));
     }
 
-    @Bean
-    SecurityConfiguration security() {
-        return new SecurityConfiguration("test-app-client-id", "test-app-realm", "test-app", "apiKey");
-    }
+
 
     @Bean
     UiConfiguration uiConfig() {

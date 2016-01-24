@@ -1,7 +1,5 @@
 package com.beolnix.marvin.history.model;
 
-import lombok.Data;
-
 import javax.persistence.*;
 import java.util.Date;
 
@@ -9,7 +7,6 @@ import java.util.Date;
  * Created by beolnix on 18/01/16.
  */
 
-@Data
 @Entity
 @Table(name="mh_message")
 public class Message {
@@ -30,4 +27,11 @@ public class Message {
     @Column
     private String msg;
 
+    public Message(Long id, Long chatId, String from, Date timestamp, String msg) {
+        this.id = id;
+        this.chatId = chatId;
+        this.from = from;
+        this.timestamp = timestamp;
+        this.msg = msg;
+    }
 }
