@@ -31,6 +31,7 @@ configurations {
 dependencies {
     compile("org.springframework:spring-web:4.1.7.RELEASE")
     compile 'org.springframework.cloud:spring-cloud-netflix-core:1.0.4.RELEASE'
+    compile "io.swagger:swagger-annotations:1.5.5"
 
     provided "org.projectlombok:lombok:$LOMBOK_VERSION"
 

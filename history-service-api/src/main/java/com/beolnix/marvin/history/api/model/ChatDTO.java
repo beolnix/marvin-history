@@ -1,14 +1,26 @@
 package com.beolnix.marvin.history.api.model;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * Created by beolnix on 23/01/16.
  */
 
+@ApiModel("Chat model")
 public class ChatDTO {
+
+    @ApiModelProperty("Chat id")
     private Long id;
+
+    @ApiModelProperty("Name of the chat")
     private String name;
+
+    @ApiModelProperty("Chat protocol")
     private String protocol;
-    private Boolean isConference;
+
+    @ApiModelProperty("Conference flag")
+    private Boolean conference;
 
     public Long getId() {
         return id;
@@ -35,10 +47,14 @@ public class ChatDTO {
     }
 
     public Boolean getConference() {
-        return isConference;
+        return conference;
     }
 
     public void setConference(Boolean conference) {
-        isConference = conference;
+        this.conference = conference;
+    }
+
+    public Boolean isConference() {
+        return this.conference;
     }
 }

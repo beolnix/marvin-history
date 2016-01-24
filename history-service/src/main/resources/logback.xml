@@ -16,6 +16,10 @@
         </encoder>
     </appender>
 
+    <logger name="io.swagger" level="ERROR">
+
+    </logger>
+
     <root level="INFO">
         <appender-ref ref="STDOUT" />
         <appender-ref ref="FILE" />

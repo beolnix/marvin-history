@@ -17,17 +17,15 @@ import java.util.List;
 /**
  * Created by beolnix on 23/01/16.
  */
-@Api(value = "chats", description = "Chats API")
 @RestController
 public class ChatController implements ChatApi {
 
-    @ApiOperation("Method returns list of all existing chats.")
     @Override
     public List<ChatDTO> getAllChats() {
         return null;
     }
 
-    @ApiOperation("Method returns chat by name.")
+
     @Override
     public ChatDTO getChatByName(@ApiParam("name of the chat.") @PathVariable("name") String name) {
         ChatDTO chatDTO = new ChatDTO();
