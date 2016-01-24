@@ -1,15 +1,24 @@
 package com.beolnix.marvin.history.api.model;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 import java.util.Date;
 
 /**
  * Created by beolnix on 23/01/16.
  */
 
+@ApiModel("DTO for history message creation request")
 public class CreateMessageDTO {
+
+    @ApiModelProperty(value = "Id of the chat", required = true)
     private Long chatId;
-    private String from;
-    private Date timestamp;
+
+    @ApiModelProperty(value = "Autor of the message", required = true)
+    private String autor;
+
+    @ApiModelProperty(value = "Text of the message", required = true)
     private String msg;
 
     public Long getChatId() {
@@ -20,20 +29,12 @@ public class CreateMessageDTO {
         this.chatId = chatId;
     }
 
-    public String getFrom() {
-        return from;
+    public String getAutor() {
+        return autor;
     }
 
-    public void setFrom(String from) {
-        this.from = from;
-    }
-
-    public Date getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(Date timestamp) {
-        this.timestamp = timestamp;
+    public void setAutor(String autor) {
+        this.autor = autor;
     }
 
     public String getMsg() {

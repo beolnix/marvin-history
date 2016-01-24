@@ -7,7 +7,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.cloud.netflix.feign.FeignClient;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import java.util.List;
 
 @Api(value = "chats", description = "Chats API")
-@FeignClient("history")
-@RequestMapping("history")
+@FeignClient(Constants.FEIGN_CLIENT_NAME)
+@RequestMapping(Constants.HISTORY_URL_ROOT)
 public interface ChatApi {
     @ApiOperation("Method returns list of all existing chats.")
     @RequestMapping(method = RequestMethod.GET, value = "/chats")
