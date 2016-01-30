@@ -2,10 +2,9 @@ package com.beolnix.marvin.history.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import javax.annotation.PostConstruct;
+import org.springframework.context.annotation.Primary;
 
 
 /**
@@ -15,13 +14,15 @@ import javax.annotation.PostConstruct;
 @Configuration
 public class HistoryConfiguration {
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @PostConstruct
-    public void customJacksonObjectMapper(){
-        Jdk8Module jdk8Module = new Jdk8Module();
+    @Bean
+    @Primary
+    public ObjectMapper customJacksonObjectMapper() {
+        ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new Jdk8Module());
+        objectMapper.configure(com.fasterxml.jackson.databind.SerializationFeature.
+                WRITE_DATES_AS_TIMESTAMPS, false);
+
+        return objectMapper;
     }
 
 }

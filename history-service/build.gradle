@@ -55,8 +55,11 @@ dependencies {
     compile 'com.google.guava:guava:18.0'
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.4.6'
 
-    compile("com.h2database:h2")
-    testCompile("junit:junit")
+    compile "com.h2database:h2"
+    testCompile "junit:junit"
+    testCompile "com.github.tomakehurst:wiremock:1.57"
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
+
 }
 
 task wrapper(type: Wrapper) {
