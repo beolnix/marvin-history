@@ -102,7 +102,7 @@ public class ChatControllerIntegrationTest {
     private ChatDTO getChatByName(String name) {
         String baseUrl = "http://localhost:"+port+"/history";
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<ChatDTO> result = restTemplate.getForEntity(baseUrl + "/chats/name/" + CHAT_NAME, ChatDTO.class);
+        ResponseEntity<ChatDTO> result = restTemplate.getForEntity(baseUrl + "/chats/name/" + name, ChatDTO.class);
         return result.getBody();
     }
 
