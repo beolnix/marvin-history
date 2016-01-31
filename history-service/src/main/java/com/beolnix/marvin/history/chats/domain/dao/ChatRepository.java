@@ -1,12 +1,10 @@
-package com.beolnix.marvin.history.repository;
+package com.beolnix.marvin.history.chats.domain.dao;
 
 
-import com.beolnix.marvin.history.model.Chat;
+import com.beolnix.marvin.history.chats.domain.model.Chat;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.repository.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Created by beolnix on 18/01/16.

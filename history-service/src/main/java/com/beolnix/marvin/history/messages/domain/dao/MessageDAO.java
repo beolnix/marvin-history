@@ -1,16 +1,15 @@
-package com.beolnix.marvin.history.repository;
+package com.beolnix.marvin.history.messages.domain.dao;
 
-import com.beolnix.marvin.history.model.Message;
+import com.beolnix.marvin.history.messages.domain.model.Message;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 
-public interface MessageRepository extends JpaRepository<Message, Long> {
+public interface MessageDAO extends JpaRepository<Message, Long> {
 
     Sort descSortByTimestamp = new Sort(new Sort.Order(Sort.Direction.DESC, "timestamp"));
 

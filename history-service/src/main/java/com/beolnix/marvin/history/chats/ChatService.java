@@ -1,10 +1,10 @@
-package com.beolnix.marvin.history.service;
+package com.beolnix.marvin.history.chats;
 
 import com.beolnix.marvin.history.api.model.ChatDTO;
 import com.beolnix.marvin.history.api.model.CreateChatDTO;
 import com.beolnix.marvin.history.error.NotFound;
-import com.beolnix.marvin.history.model.Chat;
-import com.beolnix.marvin.history.repository.ChatRepository;
+import com.beolnix.marvin.history.chats.domain.model.Chat;
+import com.beolnix.marvin.history.chats.domain.dao.ChatRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;

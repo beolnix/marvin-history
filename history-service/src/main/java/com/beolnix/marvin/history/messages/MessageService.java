@@ -1,21 +1,16 @@
-package com.beolnix.marvin.history.service;
+package com.beolnix.marvin.history.messages;
 
 import com.beolnix.marvin.history.api.model.CreateMessageDTO;
 import com.beolnix.marvin.history.api.model.MessageDTO;
 import com.beolnix.marvin.history.error.BadRequest;
-import com.beolnix.marvin.history.error.NotFound;
-import com.beolnix.marvin.history.model.Message;
-import com.beolnix.marvin.history.repository.MessageRepository;
+import com.beolnix.marvin.history.messages.domain.model.Message;
+import com.beolnix.marvin.history.messages.domain.dao.MessageDAO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
-import java.sql.Date;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,19 +21,19 @@ import java.util.stream.Collectors;
 @Service
 public class MessageService {
 
-    private final MessageRepository messageRepository;
+    private final MessageDAO messageDAO;
     private final Sort descSortByTimestamp = new Sort(new Sort.Order(Sort.Direction.DESC, "timestamp"));
 
     @Autowired
-    public MessageService(MessageRepository messageRepository) {
-        this.messageRepository = messageRepository;
+    public MessageService(MessageDAO messageDAO) {
+        this.messageDAO = messageDAO;
     }
 
     public MessageDTO createMessate(CreateMessageDTO createMessageDTO) {
         Message message = new Message();
         BeanUtils.copyProperties(createMessageDTO, message);
         message.setTimestamp(LocalDateTime.now());
-        Message savedMessage = messageRepository.save(message);
+        Message savedMessage = messageDAO.save(message);
 
         return convert(savedMessage);
     }
@@ -63,7 +58,7 @@ public class MessageService {
     }
 
     private Page<MessageDTO> getForJumpInTime(Long chatId, LocalDateTime fromDateTime, LocalDateTime toDateTime, Pageable pageable) {
-        Page<Message> page = messageRepository.findByChatIdAndTimestampLessThanAndTimestampGreaterThan(chatId,
+        Page<Message> page = messageDAO.findByChatIdAndTimestampLessThanAndTimestampGreaterThan(chatId,
                 toDateTime,
                 fromDateTime,
                 pageable);
@@ -71,12 +66,12 @@ public class MessageService {
     }
 
     private Page<MessageDTO> getForScropUp(Long chatId, Long toMessageId, Pageable pageable) {
-        Page<Message> page = messageRepository.findByChatIdAndIdLessThan(chatId, toMessageId, pageable);
+        Page<Message> page = messageDAO.findByChatIdAndIdLessThan(chatId, toMessageId, pageable);
         return convert(page, pageable);
     }
 
     private Pageable prepareDESCSort(Pageable pageable) {
-        return new PageRequest(pageable.getPageNumber(), pageable.getPageSize(), MessageRepository.descSortByTimestamp);
+        return new PageRequest(pageable.getPageNumber(), pageable.getPageSize(), MessageDAO.descSortByTimestamp);
     }
 
     private Page<MessageDTO> convert(Page<Message> page, Pageable pageable) {
@@ -88,7 +83,7 @@ public class MessageService {
     }
 
     private Page<MessageDTO> getNewest(Long chatId, Pageable pageable) {
-        Page<Message> page = messageRepository.findByChatId(chatId, pageable);
+        Page<Message> page = messageDAO.findByChatId(chatId, pageable);
         return convert(page, pageable);
     }
 

@@ -1,8 +1,7 @@
-package com.beolnix.marvin.history.model;
+package com.beolnix.marvin.history.messages.domain.model;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 /**
  * Created by beolnix on 18/01/16.

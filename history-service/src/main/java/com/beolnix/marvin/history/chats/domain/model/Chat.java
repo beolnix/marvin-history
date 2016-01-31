@@ -1,4 +1,4 @@
-package com.beolnix.marvin.history.model;
+package com.beolnix.marvin.history.chats.domain.model;
 
 import javax.persistence.*;
 

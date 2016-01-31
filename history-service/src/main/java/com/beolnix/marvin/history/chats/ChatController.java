@@ -1,19 +1,13 @@
-package com.beolnix.marvin.history.controller;
+package com.beolnix.marvin.history.chats;
 
 
 import com.beolnix.marvin.history.api.ChatApi;
 import com.beolnix.marvin.history.api.model.ChatDTO;
 import com.beolnix.marvin.history.api.model.CreateChatDTO;
 
-import com.beolnix.marvin.history.service.ChatService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
