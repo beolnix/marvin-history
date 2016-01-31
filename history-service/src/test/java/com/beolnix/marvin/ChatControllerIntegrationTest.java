@@ -4,8 +4,8 @@ import com.beolnix.marvin.history.Application;
 
 import com.beolnix.marvin.history.api.model.ChatDTO;
 import com.beolnix.marvin.history.api.model.CreateChatDTO;
-import com.beolnix.marvin.history.model.Chat;
 import com.beolnix.marvin.history.repository.ChatRepository;
+import com.beolnix.marvin.utils.RestHelper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,8 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.boot.test.WebIntegrationTest;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.client.RestTemplate;
@@ -37,10 +35,12 @@ public class ChatControllerIntegrationTest {
     private ChatRepository chatRepository;
 
     private String CHAT_NAME = "testChat";
+    private RestHelper restHelper;
 
     @Before
     public void before() {
         chatRepository.deleteAll();
+        restHelper = new RestHelper(chatRepository, port);
     }
 
     @Test
@@ -65,14 +65,14 @@ public class ChatControllerIntegrationTest {
         assertEquals(createChatDTO.getName(), chatDTO.getName());
         assertEquals(createChatDTO.getProtocol(), chatDTO.getProtocol());
 
-        testRepository(chatDTO);
+        restHelper.testRepository(chatDTO);
     }
 
     @Test
     public void getChatsTest() {
         createChat();
 
-        List<ChatDTO> chats = getChats();
+        List<ChatDTO> chats = restHelper.getChats();
 
         assertTrue(chats.size() == 1);
     }
@@ -81,7 +81,7 @@ public class ChatControllerIntegrationTest {
     public void getChatByNameTest() {
         createChat();
 
-        ChatDTO chatDTO = getChatByName(CHAT_NAME);
+        ChatDTO chatDTO = restHelper.getChatByName(CHAT_NAME);
 
         assertNotNull(chatDTO);
         assertNotNull(chatDTO.getId());
@@ -89,32 +89,6 @@ public class ChatControllerIntegrationTest {
         assertEquals(CHAT_NAME, chatDTO.getName());
     }
 
-    private void testRepository(ChatDTO chatDTO) {
-        Chat chat = chatRepository.findOne(chatDTO.getId());
 
-        assertNotNull(chat);
-
-        assertEquals(chatDTO.getName(), chat.getName());
-        assertEquals(chatDTO.getProtocol(), chat.getProtocol());
-        assertEquals(chatDTO.getConference(), chat.getConference());
-    }
-
-    private ChatDTO getChatByName(String name) {
-        String baseUrl = "http://localhost:"+port+"/history";
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<ChatDTO> result = restTemplate.getForEntity(baseUrl + "/chats/name/" + name, ChatDTO.class);
-        return result.getBody();
-    }
-
-    private List<ChatDTO> getChats() {
-        String baseUrl = "http://localhost:"+port+"/history";
-
-        RestTemplate restTemplate = new RestTemplate();
-
-        ResponseEntity<List<ChatDTO>> chatsResponse =
-                restTemplate.exchange(baseUrl + "/chats", HttpMethod.GET, null, new ParameterizedTypeReference<List<ChatDTO>>() {
-                        });
-        return chatsResponse.getBody();
-    }
 
 }

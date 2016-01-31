@@ -2,10 +2,8 @@ package com.beolnix.marvin.history.api.model;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 /**
  * Created by beolnix on 23/01/16.
@@ -23,7 +21,6 @@ public class MessageDTO {
     @ApiModelProperty("Message autor")
     private String autor;
 
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @ApiModelProperty("Date and Time of the message")
     private LocalDateTime timestamp;
 
