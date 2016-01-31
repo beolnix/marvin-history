@@ -4,7 +4,7 @@ import com.beolnix.marvin.history.api.model.ChatDTO;
 import com.beolnix.marvin.history.api.model.CreateChatDTO;
 import com.beolnix.marvin.history.error.NotFound;
 import com.beolnix.marvin.history.chats.domain.model.Chat;
-import com.beolnix.marvin.history.chats.domain.dao.ChatRepository;
+import com.beolnix.marvin.history.chats.domain.dao.ChatDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -16,24 +16,24 @@ import java.util.stream.Collectors;
 
 @Service
 public class ChatService {
-    private final ChatRepository chatRepository;
+    private final ChatDAO chatDAO;
     private final static Logger logger = LoggerFactory.getLogger(ChatService.class);
 
     @Autowired
-    public ChatService(ChatRepository chatRepository) {
-        this.chatRepository = chatRepository;
+    public ChatService(ChatDAO chatDAO) {
+        this.chatDAO = chatDAO;
     }
 
     public ChatDTO createChat(CreateChatDTO createChatDTO) {
         Chat chat = new Chat();
         BeanUtils.copyProperties(createChatDTO, chat);
-        Chat savedChat = chatRepository.save(chat);
+        Chat savedChat = chatDAO.save(chat);
 
         return convert(savedChat);
     }
 
     public ChatDTO getChatById(Long id) {
-        Chat chat = chatRepository.findOne(id);
+        Chat chat = chatDAO.findOne(id);
         if (chat != null) {
             return convert(chat);
         } else {
@@ -42,13 +42,13 @@ public class ChatService {
     }
 
     public ChatDTO getChatByName(String name) {
-        Chat chat = chatRepository.findByName(name).stream()
+        Chat chat = chatDAO.findByName(name).stream()
                 .findFirst().orElseThrow(NotFound::new);
         return convert(chat);
     }
 
     public List<ChatDTO> getChats() {
-        return chatRepository.findAll().stream()
+        return chatDAO.findAll().stream()
                 .map(this::convert)
                 .collect(Collectors.toList());
     }

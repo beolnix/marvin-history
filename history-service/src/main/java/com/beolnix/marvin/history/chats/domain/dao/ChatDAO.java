@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by beolnix on 18/01/16.
  */
-public interface ChatRepository extends JpaRepository<Chat, Long> {
+public interface ChatDAO extends JpaRepository<Chat, Long> {
 
     public List<Chat> findByName(String name);
 }

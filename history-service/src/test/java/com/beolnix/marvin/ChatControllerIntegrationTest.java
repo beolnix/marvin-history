@@ -4,7 +4,7 @@ import com.beolnix.marvin.history.Application;
 
 import com.beolnix.marvin.history.api.model.ChatDTO;
 import com.beolnix.marvin.history.api.model.CreateChatDTO;
-import com.beolnix.marvin.history.chats.domain.dao.ChatRepository;
+import com.beolnix.marvin.history.chats.domain.dao.ChatDAO;
 import com.beolnix.marvin.history.messages.domain.dao.MessageDAO;
 import com.beolnix.marvin.utils.RestHelper;
 import org.junit.Before;
@@ -33,7 +33,7 @@ public class ChatControllerIntegrationTest {
     private Integer port;
 
     @Autowired
-    private ChatRepository chatRepository;
+    private ChatDAO chatDAO;
 
     @Autowired
     private MessageDAO messageDAO;
@@ -43,8 +43,8 @@ public class ChatControllerIntegrationTest {
 
     @Before
     public void before() {
-        chatRepository.deleteAll();
-        restHelper = new RestHelper(chatRepository, messageDAO, port);
+        chatDAO.deleteAll();
+        restHelper = new RestHelper(chatDAO, messageDAO, port);
     }
 
     @Test

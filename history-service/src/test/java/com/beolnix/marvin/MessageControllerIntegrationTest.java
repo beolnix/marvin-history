@@ -3,7 +3,7 @@ package com.beolnix.marvin;
 import com.beolnix.marvin.history.Application;
 import com.beolnix.marvin.history.api.model.ChatDTO;
 import com.beolnix.marvin.history.api.model.MessageDTO;
-import com.beolnix.marvin.history.chats.domain.dao.ChatRepository;
+import com.beolnix.marvin.history.chats.domain.dao.ChatDAO;
 import com.beolnix.marvin.history.messages.domain.dao.MessageDAO;
 import com.beolnix.marvin.adapters.PageImplBean;
 import com.beolnix.marvin.utils.RestHelper;
@@ -22,9 +22,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.client.RestTemplate;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import java.util.Optional;
+
+import static org.junit.Assert.*;
 
 /**
  * Created by beolnix on 31/01/16.
@@ -39,7 +39,7 @@ public class MessageControllerIntegrationTest {
     private Integer port;
 
     @Autowired
-    private ChatRepository chatRepository;
+    private ChatDAO chatDAO;
 
     @Autowired
     private MessageDAO messageDAO;
@@ -52,10 +52,10 @@ public class MessageControllerIntegrationTest {
 
     @Before
     public void before() {
-        chatRepository.deleteAll();
+        chatDAO.deleteAll();
         messageDAO.deleteAll();
 
-        restHelper = new RestHelper(chatRepository, messageDAO, port);
+        restHelper = new RestHelper(chatDAO, messageDAO, port);
         chatDTO = restHelper.createChat(CHAT_NAME);
     }
 
@@ -86,6 +86,38 @@ public class MessageControllerIntegrationTest {
         assertEquals(1, page.getTotalPages());
         assertEquals(new Sort(Sort.Direction.DESC, "timestamp"), page.getSort());
         assertEquals(20, page.getContent().size());
+    }
+
+    @Test
+    public void getMessagesScroll() {
+        // given = 40 messages
+        for (int i = 0; i < 40; i++) {
+            restHelper.createMessage(chatDTO);
+        }
+
+        // initial request for the history
+        // must return the latest 20 messages
+        Page<MessageDTO> page = restHelper.getMessages(chatDTO);
+        MessageDTO toMessage = page.getContent().stream()
+                .filter(m -> m.getId() == 29)
+                .findFirst()
+                .orElseThrow(IllegalStateException::new);
+
+        // the next scrolling request must return messages
+        // oder then the oldest message from the initial history response
+        page = restHelper.getMessagesBackwardScroll(chatDTO, toMessage);
+
+        // there must be 20 messages older then the oldest from the initial request
+        assertNotNull(page);
+        assertEquals(20, page.getContent().size());
+
+        Optional<MessageDTO> messageAfter = page.getContent().stream()
+                .filter(m -> m.getId() >= toMessage.getId())
+                .findFirst();
+
+        // scrolling method should return only messages which were before,
+        // never which were after
+        assertFalse(messageAfter.isPresent());
     }
 
 }

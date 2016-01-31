@@ -1,14 +1,16 @@
 package com.beolnix.marvin.utils;
 
+import com.beolnix.marvin.adapters.PageImplBean;
 import com.beolnix.marvin.history.api.model.ChatDTO;
 import com.beolnix.marvin.history.api.model.CreateChatDTO;
 import com.beolnix.marvin.history.api.model.CreateMessageDTO;
 import com.beolnix.marvin.history.api.model.MessageDTO;
 import com.beolnix.marvin.history.chats.domain.model.Chat;
 import com.beolnix.marvin.history.messages.domain.model.Message;
-import com.beolnix.marvin.history.chats.domain.dao.ChatRepository;
+import com.beolnix.marvin.history.chats.domain.dao.ChatDAO;
 import com.beolnix.marvin.history.messages.domain.dao.MessageDAO;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
@@ -23,18 +25,18 @@ import static org.junit.Assert.assertNotNull;
  */
 public class RestHelper {
 
-    private final ChatRepository chatRepository;
+    private final ChatDAO chatDAO;
     private final MessageDAO messageDAO;
     private final Integer port;
 
-    public RestHelper(ChatRepository chatRepository, MessageDAO messageDAO, Integer port) {
+    public RestHelper(ChatDAO chatDAO, MessageDAO messageDAO, Integer port) {
         this.messageDAO = messageDAO;
-        this.chatRepository = chatRepository;
+        this.chatDAO = chatDAO;
         this.port = port;
     }
 
     public void testRepository(ChatDTO chatDTO) {
-        Chat chat = chatRepository.findOne(chatDTO.getId());
+        Chat chat = chatDAO.findOne(chatDTO.getId());
 
         assertNotNull(chat);
 
@@ -122,5 +124,31 @@ public class RestHelper {
         assertEquals(message.getTimestamp(), messageDTO.getTimestamp());
         assertEquals(message.getAutor(), messageDTO.getAutor());
         assertEquals(message.getMsg(), messageDTO.getMsg());
+    }
+
+    public Page<MessageDTO> getMessages(ChatDTO chatDTO) {
+        String baseUrl = "http://localhost:"+port+"/history";
+        RestTemplate restTemplate = new RestTemplate();
+
+        ResponseEntity<PageImplBean<MessageDTO>> response = restTemplate.exchange(
+                baseUrl + "/messages?chatId=" + chatDTO.getId(),
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<PageImplBean<MessageDTO>>() {
+                });
+
+        return response.getBody();
+    }
+
+    public Page<MessageDTO> getMessagesBackwardScroll(ChatDTO chatDTO, MessageDTO toMessage) {
+        RestTemplate restTemplate = new RestTemplate();
+        String baseUrl = "http://localhost:"+port+"/history";
+        ResponseEntity<PageImplBean<MessageDTO>> response = restTemplate.exchange(
+                baseUrl + "/messages?chatId=" + chatDTO.getId() + "&toMessageId=" + toMessage.getId(),
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<PageImplBean<MessageDTO>>() {
+                });
+        return response.getBody();
     }
 }
