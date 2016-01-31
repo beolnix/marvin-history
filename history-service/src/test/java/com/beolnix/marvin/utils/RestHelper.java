@@ -2,14 +2,15 @@ package com.beolnix.marvin.utils;
 
 import com.beolnix.marvin.history.api.model.ChatDTO;
 import com.beolnix.marvin.history.api.model.CreateChatDTO;
-import com.beolnix.marvin.history.model.Chat;
-import com.beolnix.marvin.history.repository.ChatRepository;
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.beolnix.marvin.history.api.model.CreateMessageDTO;
+import com.beolnix.marvin.history.api.model.MessageDTO;
+import com.beolnix.marvin.history.chats.domain.model.Chat;
+import com.beolnix.marvin.history.messages.domain.model.Message;
+import com.beolnix.marvin.history.chats.domain.dao.ChatRepository;
+import com.beolnix.marvin.history.messages.domain.dao.MessageDAO;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
@@ -23,9 +24,11 @@ import static org.junit.Assert.assertNotNull;
 public class RestHelper {
 
     private final ChatRepository chatRepository;
+    private final MessageDAO messageDAO;
     private final Integer port;
 
-    public RestHelper(ChatRepository chatRepository, Integer port) {
+    public RestHelper(ChatRepository chatRepository, MessageDAO messageDAO, Integer port) {
+        this.messageDAO = messageDAO;
         this.chatRepository = chatRepository;
         this.port = port;
     }
@@ -83,5 +86,41 @@ public class RestHelper {
         testRepository(chatDTO);
 
         return chatDTO;
+    }
+
+    public MessageDTO createMessage(ChatDTO chatDTO) {
+        String baseUrl = "http://localhost:"+port+"/history";
+        RestTemplate restTemplate = new RestTemplate();
+
+        CreateMessageDTO createMessageDTO = new CreateMessageDTO();
+        createMessageDTO.setAutor("testAutor");
+        createMessageDTO.setChatId(chatDTO.getId());
+        createMessageDTO.setMsg("testMsg");
+
+        ResponseEntity<MessageDTO> result = restTemplate.postForEntity(baseUrl + "/messages",
+                createMessageDTO, MessageDTO.class);
+
+        MessageDTO messageDTO = result.getBody();
+
+        assertNotNull(messageDTO);
+        assertNotNull(messageDTO.getId());
+        assertEquals(createMessageDTO.getAutor(), messageDTO.getAutor());
+        assertEquals(createMessageDTO.getChatId(), messageDTO.getChatId());
+        assertEquals(createMessageDTO.getMsg(), messageDTO.getMsg());
+
+        testRepository(messageDTO);
+
+        return messageDTO;
+    }
+
+    private void testRepository(MessageDTO messageDTO) {
+        Message message = messageDAO.findOne(messageDTO.getId());
+
+        assertNotNull(message);
+        assertEquals(messageDTO.getId(), message.getId());
+        assertEquals(message.getChatId(), messageDTO.getChatId());
+        assertEquals(message.getTimestamp(), messageDTO.getTimestamp());
+        assertEquals(message.getAutor(), messageDTO.getAutor());
+        assertEquals(message.getMsg(), messageDTO.getMsg());
     }
 }

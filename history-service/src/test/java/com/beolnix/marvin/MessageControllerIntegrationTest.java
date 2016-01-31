@@ -2,26 +2,29 @@ package com.beolnix.marvin;
 
 import com.beolnix.marvin.history.Application;
 import com.beolnix.marvin.history.api.model.ChatDTO;
-import com.beolnix.marvin.history.api.model.CreateMessageDTO;
 import com.beolnix.marvin.history.api.model.MessageDTO;
-import com.beolnix.marvin.history.model.Message;
-import com.beolnix.marvin.history.repository.ChatRepository;
-import com.beolnix.marvin.history.repository.MessageRepository;
+import com.beolnix.marvin.history.chats.domain.dao.ChatRepository;
+import com.beolnix.marvin.history.messages.domain.dao.MessageDAO;
+import com.beolnix.marvin.adapters.PageImplBean;
 import com.beolnix.marvin.utils.RestHelper;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.boot.test.WebIntegrationTest;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.client.RestTemplate;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by beolnix on 31/01/16.
@@ -39,7 +42,7 @@ public class MessageControllerIntegrationTest {
     private ChatRepository chatRepository;
 
     @Autowired
-    private MessageRepository messageRepository;
+    private MessageDAO messageDAO;
 
     private String CHAT_NAME = "testChat";
     private RestHelper restHelper;
@@ -50,45 +53,39 @@ public class MessageControllerIntegrationTest {
     @Before
     public void before() {
         chatRepository.deleteAll();
-        messageRepository.deleteAll();
+        messageDAO.deleteAll();
 
-        restHelper = new RestHelper(chatRepository, port);
+        restHelper = new RestHelper(chatRepository, messageDAO, port);
         chatDTO = restHelper.createChat(CHAT_NAME);
     }
 
     @Test
     public void createMessage() {
+        restHelper.createMessage(chatDTO);
+    }
+
+    @Test
+    public void getMessages() {
+        for (int i = 0; i < 20; i++) {
+            restHelper.createMessage(chatDTO);
+        }
+
         String baseUrl = "http://localhost:"+port+"/history";
         RestTemplate restTemplate = new RestTemplate();
 
-        CreateMessageDTO createMessageDTO = new CreateMessageDTO();
-        createMessageDTO.setAutor("testAutor");
-        createMessageDTO.setChatId(chatDTO.getId());
-        createMessageDTO.setMsg("testMsg");
+        ResponseEntity<PageImplBean<MessageDTO>> response = restTemplate.exchange(baseUrl + "/messages?chatId=" + chatDTO.getId(),
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<PageImplBean<MessageDTO>>() {
+        });
 
-        ResponseEntity<MessageDTO> result = restTemplate.postForEntity(baseUrl + "/messages",
-                createMessageDTO, MessageDTO.class);
+        Page<MessageDTO> page = response.getBody();
 
-        MessageDTO messageDTO = result.getBody();
-
-        assertNotNull(messageDTO);
-        assertNotNull(messageDTO.getId());
-        assertEquals(createMessageDTO.getAutor(), messageDTO.getAutor());
-        assertEquals(createMessageDTO.getChatId(), messageDTO.getChatId());
-        assertEquals(createMessageDTO.getMsg(), messageDTO.getMsg());
-
-        testRepository(messageDTO);
+        assertNotNull(page);
+        assertEquals(20, page.getSize());
+        assertEquals(1, page.getTotalPages());
+        assertEquals(new Sort(Sort.Direction.DESC, "timestamp"), page.getSort());
+        assertEquals(20, page.getContent().size());
     }
 
-
-    private void testRepository(MessageDTO messageDTO) {
-        Message message = messageRepository.findOne(messageDTO.getId());
-
-        assertNotNull(message);
-        assertEquals(messageDTO.getId(), message.getId());
-        assertEquals(message.getChatId(), messageDTO.getChatId());
-        assertEquals(message.getTimestamp(), messageDTO.getTimestamp());
-        assertEquals(message.getAutor(), messageDTO.getAutor());
-        assertEquals(message.getMsg(), messageDTO.getMsg());
-    }
 }
