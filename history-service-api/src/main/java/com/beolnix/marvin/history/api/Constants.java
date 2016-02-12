@@ -6,4 +6,7 @@ package com.beolnix.marvin.history.api;
 public class Constants {
     public static final String FEIGN_CLIENT_NAME = "history";
     public static final String HISTORY_URL_ROOT = "/history";
+
+    public static final String API_KEY_HEADER = "X-WA-KEY";
+    public static final String API_AUTH_HEADER = "X-WA-AUTH";
 }
