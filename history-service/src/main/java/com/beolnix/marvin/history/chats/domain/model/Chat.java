@@ -20,7 +20,7 @@ public class Chat {
     @Column
     private String protocol;
 
-    @Column(name="IS_CONFERENCE")
+    @Column(name="is_conference")
     private Boolean isConference;
 
     public Long getId() {
