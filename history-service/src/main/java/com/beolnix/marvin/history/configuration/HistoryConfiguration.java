@@ -1,9 +1,15 @@
 package com.beolnix.marvin.history.configuration;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.context.annotation.Bean;
+import com.beolnix.marvin.history.configuration.converter.DateToLocalDateTimeConverter;
+import com.beolnix.marvin.history.configuration.converter.LocalDateTimeToDateConverter;
+import com.mongodb.MongoClient;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
+import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
+import org.springframework.data.mongodb.core.convert.CustomConversions;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+
+import java.util.Arrays;
 
 
 /**
@@ -11,17 +17,36 @@ import org.springframework.context.annotation.Primary;
  */
 
 @Configuration
-public class HistoryConfiguration {
+@EnableMongoRepositories("com.beolnix.marvin.history")
+public class HistoryConfiguration extends AbstractMongoConfiguration {
 
-//    @Bean
-//    @Primary
-//    public ObjectMapper customJacksonObjectMapper() {
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        objectMapper.registerModule(new Jdk8Module());
-//        objectMapper.configure(com.fasterxml.jackson.databind.SerializationFeature.
-//                WRITE_DATES_AS_TIMESTAMPS, false);
-//
-//        return objectMapper;
-//    }
+    @Value("${history.mongo.host}")
+    private String mongoHost;
+
+    @Value("${history.mongo.database}")
+    private String mongoDatabase;
+
+
+    @Override
+    protected String getDatabaseName() {
+        return mongoDatabase;
+    }
+
+    @Override
+    public MongoClient mongo() throws Exception {
+        return new MongoClient(mongoHost);
+    }
+
+    @Override
+    public CustomConversions customConversions() {
+        return new CustomConversions(Arrays.asList(
+                new DateToLocalDateTimeConverter(),
+                new LocalDateTimeToDateConverter()
+            )
+        );
+    }
+
+
+
 
 }

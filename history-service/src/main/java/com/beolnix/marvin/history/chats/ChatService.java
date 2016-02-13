@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class ChatService {
@@ -32,7 +33,7 @@ public class ChatService {
         return convert(savedChat);
     }
 
-    public ChatDTO getChatById(Long id) {
+    public ChatDTO getChatById(String id) {
         Chat chat = chatDAO.findOne(id);
         if (chat != null) {
             return convert(chat);
@@ -48,7 +49,7 @@ public class ChatService {
     }
 
     public List<ChatDTO> getChats() {
-        return chatDAO.findAll().stream()
+        return StreamSupport.stream(chatDAO.findAll().spliterator(), false)
                 .map(this::convert)
                 .collect(Collectors.toList());
     }

@@ -33,7 +33,7 @@ public interface ChatApi {
             @ApiImplicitParam(value = "Id of the chat", name = "id", dataType = "int", required = true, paramType = "path"),
     })
     @RequestMapping(method = RequestMethod.GET, value = "/chats/id/{id}")
-    ChatDTO getChatById(@PathVariable("id") Long id);
+    ChatDTO getChatById(@PathVariable("id") String id);
 
     @ApiOperation("Method creates new chat based on provided model.")
     @ApiResponses(value = { @ApiResponse(code = 400, message = "Bad request") })

@@ -26,9 +26,9 @@ public interface MessageApi {
     @ApiImplicitParams({
             @ApiImplicitParam(value = "size of the page", name = "size", defaultValue = "10", dataType = "int", required = false, paramType = "query"),
             @ApiImplicitParam(value = "number of the page", name = "page", defaultValue = "0", dataType = "int", required = false, paramType = "query"),
-            @ApiImplicitParam(value = "Id of the chat", name="chatId", required = true, dataType = "int", paramType = "query"),
+            @ApiImplicitParam(value = "Id of the chat", name="chatId", required = true, dataType = "string", paramType = "query"),
             @ApiImplicitParam(value = "Method will filter out messages with id greater then given",
-                    name="toMessageId", dataType = "int", required = false, paramType = "query"),
+                    name="toMessageId", dataType = "string", required = false, paramType = "query"),
             @ApiImplicitParam(value = "Method will filter out messages older then given date. Format=yyyy-MM-dd'T'HH:mm:ss.SSSZ",
                     name="fromDateTime", example = "2000-10-31 01:30:00.000-05:00", dataType = "String", required = false, paramType = "query"),
             @ApiImplicitParam(value = "Method will filter out messages newer then given date. Format=yyyy-MM-dd'T'HH:mm:ss.SSSZ",
@@ -39,8 +39,8 @@ public interface MessageApi {
     @ApiParam(value = "Message id limit. Method will return messages with id less then given",
             name="toMessageId",
             required = false)
-    Page<MessageDTO> getMessages(@RequestParam(value = "chatId", required = true) Long chatId,
-                                 @RequestParam(value = "toMessageId", required = false) Long toMessageId,
+    Page<MessageDTO> getMessages(@RequestParam(value = "chatId", required = true) String chatId,
+                                 @RequestParam(value = "toMessageId", required = false) String toMessageId,
 
                                  @RequestParam(value = "fromDateTime", required = false)
                                  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)

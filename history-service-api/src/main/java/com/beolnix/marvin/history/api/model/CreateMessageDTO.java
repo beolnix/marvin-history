@@ -13,7 +13,7 @@ import java.util.Date;
 public class CreateMessageDTO {
 
     @ApiModelProperty(value = "Id of the chat", required = true)
-    private Long chatId;
+    private String chatId;
 
     @ApiModelProperty(value = "Autor of the message", required = true)
     private String autor;
@@ -21,11 +21,11 @@ public class CreateMessageDTO {
     @ApiModelProperty(value = "Text of the message", required = true)
     private String msg;
 
-    public Long getChatId() {
+    public String getChatId() {
         return chatId;
     }
 
-    public void setChatId(Long chatId) {
+    public void setChatId(String chatId) {
         this.chatId = chatId;
     }
 

@@ -4,20 +4,22 @@ import com.beolnix.marvin.history.messages.domain.model.Message;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.time.LocalDateTime;
 
 
-public interface MessageDAO extends JpaRepository<Message, Long> {
+public interface MessageDAO extends PagingAndSortingRepository<Message, String> {
 
     Sort descSortByTimestamp = new Sort(new Sort.Order(Sort.Direction.DESC, "timestamp"));
 
-    Page<Message> findByChatId(Long chatId, Pageable pageable);
+    Page<Message> findByChatId(String chatId, Pageable pageable);
 
-    Page<Message> findByChatIdAndIdLessThan(Long chatId, Long id, Pageable pageable);
+    Page<Message> findByChatIdAndTimestampLessThanEqual(String chatId, LocalDateTime timestamp, Pageable pageable);
 
-    Page<Message> findByChatIdAndTimestampLessThanAndTimestampGreaterThan(Long chatId,
+    Message findOneByChatIdAndId(String chatId, String id);
+
+    Page<Message> findByChatIdAndTimestampLessThanAndTimestampGreaterThan(String chatId,
                                                                           LocalDateTime toDateTime,
                                                                           LocalDateTime fromDateTime,
                                                                           Pageable pageable);

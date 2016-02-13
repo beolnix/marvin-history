@@ -2,14 +2,14 @@ package com.beolnix.marvin.history.chats.domain.dao;
 
 
 import com.beolnix.marvin.history.chats.domain.model.Chat;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.util.List;
 
 /**
  * Created by beolnix on 18/01/16.
  */
-public interface ChatDAO extends JpaRepository<Chat, Long> {
+public interface ChatDAO extends PagingAndSortingRepository<Chat, String> {
 
-    public List<Chat> findByName(String name);
+    List<Chat> findByName(String name);
 }

@@ -38,8 +38,8 @@ public class MessageService {
         return convert(savedMessage);
     }
 
-    public Page<MessageDTO> getMessages(Long chatId,
-                                        Long toMessageId,
+    public Page<MessageDTO> getMessages(String chatId,
+                                        String toMessageId,
                                         LocalDateTime fromDateTime,
                                         LocalDateTime toDateTime,
                                         Pageable pageable) {
@@ -57,7 +57,7 @@ public class MessageService {
 
     }
 
-    private Page<MessageDTO> getForJumpInTime(Long chatId, LocalDateTime fromDateTime, LocalDateTime toDateTime, Pageable pageable) {
+    private Page<MessageDTO> getForJumpInTime(String chatId, LocalDateTime fromDateTime, LocalDateTime toDateTime, Pageable pageable) {
         Page<Message> page = messageDAO.findByChatIdAndTimestampLessThanAndTimestampGreaterThan(chatId,
                 toDateTime,
                 fromDateTime,
@@ -65,8 +65,10 @@ public class MessageService {
         return convert(page, pageable);
     }
 
-    private Page<MessageDTO> getForScropUp(Long chatId, Long toMessageId, Pageable pageable) {
-        Page<Message> page = messageDAO.findByChatIdAndIdLessThan(chatId, toMessageId, pageable);
+    private Page<MessageDTO> getForScropUp(String chatId, String toMessageId, Pageable pageable) {
+        Message message = messageDAO.findOneByChatIdAndId(chatId, toMessageId);
+        LocalDateTime toDateTime = message.getTimestamp();
+        Page<Message> page = messageDAO.findByChatIdAndTimestampLessThanEqual(chatId, toDateTime, pageable);
         return convert(page, pageable);
     }
 
@@ -82,7 +84,7 @@ public class MessageService {
         return new PageImpl<MessageDTO>(entities, pageable, page.getTotalPages());
     }
 
-    private Page<MessageDTO> getNewest(Long chatId, Pageable pageable) {
+    private Page<MessageDTO> getNewest(String chatId, Pageable pageable) {
         Page<Message> page = messageDAO.findByChatId(chatId, pageable);
         return convert(page, pageable);
     }

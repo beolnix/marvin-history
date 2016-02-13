@@ -1,33 +1,30 @@
 package com.beolnix.marvin.history.chats.domain.model;
 
-import javax.persistence.*;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
  * Created by beolnix on 18/01/16.
  */
 
-@Entity
-@Table(name="mh_chat")
+@Document
 public class Chat {
 
     @Id
-    @GeneratedValue
-    private Long id;
+    private String id;
 
-    @Column
+    @Indexed
     private String name;
-
-    @Column
     private String protocol;
-
-    @Column(name="is_conference")
     private Boolean isConference;
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

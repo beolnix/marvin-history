@@ -13,10 +13,10 @@ import java.time.LocalDateTime;
 public class MessageDTO {
 
     @ApiModelProperty("Message id")
-    private Long id;
+    private String id;
 
     @ApiModelProperty("Id of the Chat")
-    private Long chatId;
+    private String chatId;
 
     @ApiModelProperty("Message autor")
     private String autor;
@@ -27,19 +27,19 @@ public class MessageDTO {
     @ApiModelProperty("Text of the message")
     private String msg;
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public Long getChatId() {
+    public String getChatId() {
         return chatId;
     }
 
-    public void setChatId(Long chatId) {
+    public void setChatId(String chatId) {
         this.chatId = chatId;
     }
 

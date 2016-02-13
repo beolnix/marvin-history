@@ -28,9 +28,9 @@ public class MessageController implements MessageApi {
     }
 
     @Override
-    public Page<MessageDTO> getMessages(@RequestParam(value = "chatId", required = true) Long chatId,
+    public Page<MessageDTO> getMessages(@RequestParam(value = "chatId", required = true) String chatId,
 
-                                        @RequestParam(value = "toMessageId", required = false) Long toMessageId,
+                                        @RequestParam(value = "toMessageId", required = false) String toMessageId,
 
                                         @RequestParam(value = "fromDateTime", required = false)
                                         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)

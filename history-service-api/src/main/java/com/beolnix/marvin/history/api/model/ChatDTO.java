@@ -11,7 +11,7 @@ import io.swagger.annotations.ApiModelProperty;
 public class ChatDTO {
 
     @ApiModelProperty("Chat id")
-    private Long id;
+    private String id;
 
     @ApiModelProperty("Name of the chat")
     private String name;
@@ -22,11 +22,11 @@ public class ChatDTO {
     @ApiModelProperty("Conference flag")
     private Boolean conference;
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

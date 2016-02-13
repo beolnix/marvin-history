@@ -1,45 +1,40 @@
 package com.beolnix.marvin.history.messages.domain.model;
 
-import javax.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+
 import java.time.LocalDateTime;
 
 /**
  * Created by beolnix on 18/01/16.
  */
 
-@Entity
-@Table(name="mh_message")
 public class Message {
 
     @Id
-    @GeneratedValue
-    private Long id;
+    private String id;
 
-    @Column(name="chat_id")
-    private Long chatId;
-
-    @Column
+    @Indexed
+    private String chatId;
     private String autor;
 
-    @Column
+    @Indexed
     private LocalDateTime timestamp;
-
-    @Column
     private String msg;
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public Long getChatId() {
+    public String getChatId() {
         return chatId;
     }
 
-    public void setChatId(Long chatId) {
+    public void setChatId(String chatId) {
         this.chatId = chatId;
     }
 

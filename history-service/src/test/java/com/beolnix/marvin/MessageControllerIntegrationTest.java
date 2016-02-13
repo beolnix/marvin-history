@@ -98,10 +98,7 @@ public class MessageControllerIntegrationTest {
         // initial request for the history
         // must return the latest 20 messages
         Page<MessageDTO> page = restHelper.getMessages(chatDTO);
-        MessageDTO toMessage = page.getContent().stream()
-                .filter(m -> m.getId() == 29)
-                .findFirst()
-                .orElseThrow(IllegalStateException::new);
+        MessageDTO toMessage = page.getContent().get(19);
 
         // the next scrolling request must return messages
         // oder then the oldest message from the initial history response
@@ -112,7 +109,7 @@ public class MessageControllerIntegrationTest {
         assertEquals(20, page.getContent().size());
 
         Optional<MessageDTO> messageAfter = page.getContent().stream()
-                .filter(m -> m.getId() >= toMessage.getId())
+                .filter(m -> m.getTimestamp().isAfter(toMessage.getTimestamp()))
                 .findFirst();
 
         // scrolling method should return only messages which were before,
