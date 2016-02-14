@@ -3,13 +3,15 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.3.2.RELEASE")
-        classpath "io.spring.gradle:dependency-management-plugin:0.5.2.RELEASE"
+        classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.3.2.RELEASE'
+        classpath 'io.spring.gradle:dependency-management-plugin:0.5.2.RELEASE'
+        classpath 'se.transmode.gradle:gradle-docker:1.2'
     }
 }
 
 apply plugin: 'spring-boot'
-apply plugin: "io.spring.dependency-management"
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'docker'
 
 jar {
     baseName = 'history-service'
@@ -53,7 +55,6 @@ dependencies {
 //    compile 'org.springframework.data:spring-data-mongodb:1.8.2.RELEASE'
 
     compile 'org.springframework.data:spring-data-commons'
-    compile 'org.springframework.data:spring-data-commons-core'
     compile 'org.springframework.data:spring-data-mongodb'
 
 
@@ -68,6 +69,22 @@ dependencies {
     testCompile "com.github.tomakehurst:wiremock:1.57"
     testCompile 'org.springframework.boot:spring-boot-starter-test'
 
+}
+
+
+group = 'registry.buildloft.com'
+
+task buildDocker(type: Docker, dependsOn: build) {
+    push = true
+    tag = "${project.group}/history-service"
+    applicationName = jar.baseName
+    dockerfile = file('src/main/docker/Dockerfile')
+    doFirst {
+        copy {
+            from jar
+            into stageDir
+        }
+    }
 }
 
 task wrapper(type: Wrapper) {
