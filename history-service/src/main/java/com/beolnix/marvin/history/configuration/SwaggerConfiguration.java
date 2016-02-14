@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -43,10 +44,20 @@ public class SwaggerConfiguration {
     @Autowired
     private TypeResolver typeResolver;
 
+    @Value("${history.hostname:localhost}")
+    private String hostname;
+
     @Bean
     public Docket historyApi() {
-        return new Docket(DocumentationType.SWAGGER_2).select().apis(RequestHandlerSelectors.any()).paths((path) -> path.startsWith("/history")).build().pathMapping("/")
-                .directModelSubstitute(LocalDate.class, String.class).genericModelSubstitutes(ResponseEntity.class)
+        return new Docket(DocumentationType.SWAGGER_2)
+                .host(hostname)
+                .select()
+                .apis(RequestHandlerSelectors.any())
+                .paths((path) -> path.startsWith("/history"))
+                .build()
+                .pathMapping("/")
+                .directModelSubstitute(LocalDate.class, String.class)
+                .genericModelSubstitutes(ResponseEntity.class)
                 .alternateTypeRules(newRule(typeResolver.resolve(DeferredResult.class, typeResolver.resolve(ResponseEntity.class, WildcardType.class)), typeResolver.resolve(WildcardType.class)))
                 .useDefaultResponseMessages(false)
                 .globalResponseMessage(RequestMethod.GET, newArrayList(new ResponseMessageBuilder().code(500).message("500 message").responseModel(new ModelRef("Error")).build()))
