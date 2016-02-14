@@ -53,7 +53,7 @@ public class SwaggerConfiguration {
                 .host(hostname)
                 .select()
                 .apis(RequestHandlerSelectors.any())
-                .paths((path) -> path.startsWith("/history"))
+                .paths((path) -> path.startsWith("/api/v1"))
                 .build()
                 .pathMapping("/")
                 .directModelSubstitute(LocalDate.class, String.class)
