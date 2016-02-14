@@ -1,0 +1,12 @@
+history:
+  image: registry.buildloft.com/history-service:0.1.0
+  links:
+    - mongodb
+  ports:
+    - 8087:8080
+mongodb:
+  image: mongo:3.2
+  ports:
+    - 27017:27017
+  volumes:
+    - /home/deploy/mongo/data:/data/db

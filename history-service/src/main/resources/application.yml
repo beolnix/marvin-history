@@ -1,2 +1,2 @@
-history.mongo.host: localhost
+history.mongo.host: deploy_mongodb_1
 history.mongo.database: history
