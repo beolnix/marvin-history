@@ -94,14 +94,15 @@ public class ChatControllerIntegrationTest {
 
     @Test
     public void getChatByNameTest() {
-        createChat();
+        String testChatName = "19:9804fedee7dd42dd850547f3d074fbe6@thread.skype".replace(".", "-");
+        restHelper.createChat(testChatName);
 
-        ChatDTO chatDTO = restHelper.getChatByName(CHAT_NAME);
+        ChatDTO chatDTO = restHelper.getChatByName(testChatName);
 
         assertNotNull(chatDTO);
         assertNotNull(chatDTO.getId());
 
-        assertEquals(CHAT_NAME, chatDTO.getName());
+        assertEquals(testChatName, chatDTO.getName());
     }
 
 
