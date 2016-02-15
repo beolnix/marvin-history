@@ -6,6 +6,7 @@ import com.beolnix.marvin.history.api.model.MessageDTO;
 import com.beolnix.marvin.history.chats.domain.dao.ChatDAO;
 import com.beolnix.marvin.history.messages.domain.dao.MessageDAO;
 import com.beolnix.marvin.adapters.PageImplBean;
+import com.beolnix.marvin.utils.HeaderRequestInterceptor;
 import com.beolnix.marvin.utils.RestHelper;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,10 +19,14 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
@@ -48,7 +53,11 @@ public class MessageControllerIntegrationTest {
     private RestHelper restHelper;
 
     private ChatDTO chatDTO;
+    List<ClientHttpRequestInterceptor> interceptors = new ArrayList<ClientHttpRequestInterceptor>();
 
+    public MessageControllerIntegrationTest() {
+        interceptors.add(new HeaderRequestInterceptor("Accept", MediaType.APPLICATION_JSON_VALUE));
+    }
 
     @Before
     public void before() {
@@ -72,7 +81,7 @@ public class MessageControllerIntegrationTest {
 
         String baseUrl = "http://localhost:"+port+"/history";
         RestTemplate restTemplate = new RestTemplate();
-
+        restTemplate.setInterceptors(interceptors);
         ResponseEntity<PageImplBean<MessageDTO>> response = restTemplate.exchange(baseUrl + "/messages?chatId=" + chatDTO.getId(),
                 HttpMethod.GET,
                 null,
