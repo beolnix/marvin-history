@@ -1,6 +1,7 @@
 package com.beolnix.marvin.utils;
 
 import com.beolnix.marvin.adapters.PageImplBean;
+import com.beolnix.marvin.history.api.Constants;
 import com.beolnix.marvin.history.api.model.ChatDTO;
 import com.beolnix.marvin.history.api.model.CreateChatDTO;
 import com.beolnix.marvin.history.api.model.CreateMessageDTO;
@@ -37,12 +38,16 @@ public class RestHelper {
     private final MessageDAO messageDAO;
     private final Integer port;
     private final String baseUrl;
+    private final String apiKey;
+    private final String apiAuth;
 
-    public RestHelper(ChatDAO chatDAO, MessageDAO messageDAO, Integer port) {
+    public RestHelper(ChatDAO chatDAO, MessageDAO messageDAO, Integer port, String apiKey, String apiAuth) {
         this.messageDAO = messageDAO;
         this.chatDAO = chatDAO;
         this.port = port;
-        baseUrl = "http://localhost:"+port+"/api/v1/";
+        this.baseUrl = "http://localhost:"+port+"/api/v1/";
+        this.apiKey = apiKey;
+        this.apiAuth = apiAuth;
     }
 
     public void testRepository(ChatDTO chatDTO) {
@@ -165,6 +170,8 @@ public class RestHelper {
                 HttpRequest wrapper = new HttpRequestWrapper(request);
                 wrapper.getHeaders().set("Content-Type", MediaType.APPLICATION_JSON_VALUE);
                 wrapper.getHeaders().set("Accept", MediaType.APPLICATION_JSON_VALUE);
+                wrapper.getHeaders().set(Constants.API_KEY_HEADER, apiKey);
+                wrapper.getHeaders().set(Constants.API_AUTH_HEADER, apiAuth);
                 return execution.execute(wrapper, body);
             }
         });

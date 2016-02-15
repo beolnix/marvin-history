@@ -41,6 +41,12 @@ public class ChatControllerIntegrationTest {
     @Value("${local.server.port}")
     private Integer port;
 
+    @Value("${api.key}")
+    private String apiKey;
+
+    @Value("${api.auth}")
+    private String apiAuth;
+
     @Autowired
     private ChatDAO chatDAO;
 
@@ -56,14 +62,13 @@ public class ChatControllerIntegrationTest {
     public void before() {
         baseUrl = "http://localhost:"+port+"/api/v1/";
         chatDAO.deleteAll();
-        restHelper = new RestHelper(chatDAO, messageDAO, port);
+        restHelper = new RestHelper(chatDAO, messageDAO, port, apiKey, apiAuth);
     }
 
     @Test
     public void createChat() {
         // given
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.setInterceptors(restHelper.getHeaders());
+        RestTemplate restTemplate = restHelper.getRestTemplate();
         CreateChatDTO createChatDTO = new CreateChatDTO();
         createChatDTO.setConference(true);
         createChatDTO.setName(CHAT_NAME);

@@ -49,6 +49,12 @@ public class MessageControllerIntegrationTest {
     @Autowired
     private MessageDAO messageDAO;
 
+    @Value("${api.key}")
+    private String apiKey;
+
+    @Value("${api.auth}")
+    private String apiAuth;
+
     private String CHAT_NAME = "testChat";
     private RestHelper restHelper;
 
@@ -61,7 +67,7 @@ public class MessageControllerIntegrationTest {
         chatDAO.deleteAll();
         messageDAO.deleteAll();
 
-        restHelper = new RestHelper(chatDAO, messageDAO, port);
+        restHelper = new RestHelper(chatDAO, messageDAO, port, apiKey, apiAuth);
         chatDTO = restHelper.createChat(CHAT_NAME);
         baseUrl = "http://localhost:"+port+"/api/v1/";
     }

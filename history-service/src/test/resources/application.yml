@@ -1,2 +1,5 @@
 history.mongo.host: localhost
 history.mongo.database: historyIntTest
+
+api.key: key
+api.auth: auth

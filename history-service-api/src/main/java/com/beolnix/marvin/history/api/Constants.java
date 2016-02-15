@@ -10,4 +10,5 @@ public class Constants {
 
     public static final String API_KEY_HEADER = "X-WA-KEY";
     public static final String API_AUTH_HEADER = "X-WA-AUTH";
+    public static final String API_DATE_HEADER = "X-WA-DATE";
 }

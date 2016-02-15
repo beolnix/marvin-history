@@ -8,10 +8,12 @@ import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
 import com.mongodb.MongoClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
 import org.springframework.data.mongodb.core.convert.CustomConversions;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import java.text.DateFormat;
 import java.util.Arrays;
@@ -22,6 +24,7 @@ import java.util.Arrays;
  */
 
 @Configuration
+@ComponentScan("com.beolnix.marvin.history")
 @EnableMongoRepositories("com.beolnix.marvin.history")
 public class HistoryConfiguration extends AbstractMongoConfiguration {
 
@@ -30,7 +33,6 @@ public class HistoryConfiguration extends AbstractMongoConfiguration {
 
     @Value("${history.mongo.database}")
     private String mongoDatabase;
-
 
     @Override
     protected String getDatabaseName() {
