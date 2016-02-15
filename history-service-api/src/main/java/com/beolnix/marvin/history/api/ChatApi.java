@@ -16,7 +16,7 @@ import java.util.List;
 @RequestMapping(Constants.HISTORY_URL_ROOT)
 public interface ChatApi {
     @ApiOperation("Method returns list of all existing chats.")
-    @RequestMapping(method = RequestMethod.GET, value = "/chats")
+    @RequestMapping(method = RequestMethod.GET, value = "/chats", produces = "application/json")
     List<ChatDTO> getAllChats();
 
     @ApiOperation(value = "Method returns chat by name.", response = ChatDTO.class)
@@ -24,7 +24,7 @@ public interface ChatApi {
     @ApiImplicitParams({
             @ApiImplicitParam(value = "Name of the chat", name = "name", dataType = "String", required = true, paramType = "path"),
     })
-    @RequestMapping(method = RequestMethod.GET, value = "/chats/name/{name}")
+    @RequestMapping(method = RequestMethod.GET, value = "/chats/name/{name}", produces = "application/json")
     ChatDTO getChatByName(@PathVariable("name") String name);
 
     @ApiOperation(value = "Method returns chat by id.", response = ChatDTO.class)
@@ -32,11 +32,12 @@ public interface ChatApi {
     @ApiImplicitParams({
             @ApiImplicitParam(value = "Id of the chat", name = "id", dataType = "int", required = true, paramType = "path"),
     })
-    @RequestMapping(method = RequestMethod.GET, value = "/chats/id/{id}")
+    @RequestMapping(method = RequestMethod.GET, value = "/chats/id/{id}", produces = "application/json")
     ChatDTO getChatById(@PathVariable("id") String id);
 
     @ApiOperation("Method creates new chat based on provided model.")
     @ApiResponses(value = { @ApiResponse(code = 400, message = "Bad request") })
-    @RequestMapping(method = RequestMethod.POST, value = "/chats")
+    @RequestMapping(method = RequestMethod.POST, value = "/chats",
+            consumes = "application/json", produces = "application/json")
     ChatDTO createChat(@RequestBody CreateChatDTO createChatDTO);
 }

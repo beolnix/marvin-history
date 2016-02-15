@@ -34,7 +34,7 @@ public interface MessageApi {
             @ApiImplicitParam(value = "Method will filter out messages newer then given date. Format=yyyy-MM-dd'T'HH:mm:ss.SSSZ",
                     name="toDateTime", example = "2000-10-31 01:30:00.000-05:00", required = false, paramType = "query")
     })
-    @RequestMapping(method = RequestMethod.GET, value = "/messages")
+    @RequestMapping(method = RequestMethod.GET, value = "/messages", produces = "application/json")
 
     @ApiParam(value = "Message id limit. Method will return messages with id less then given",
             name="toMessageId",
@@ -55,6 +55,6 @@ public interface MessageApi {
 
 
     @ApiOperation("Method creates new message based on provided model")
-    @RequestMapping(method = RequestMethod.POST, value = "/messages")
+    @RequestMapping(method = RequestMethod.POST, value = "/messages", consumes = "application/json", produces = "application/json")
     MessageDTO createMessate(@RequestBody CreateMessageDTO createMessageDTO);
 }
