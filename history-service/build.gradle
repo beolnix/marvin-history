@@ -84,6 +84,11 @@ task buildDocker(type: Docker, dependsOn: build) {
             from jar
             into stageDir
         }
+
+        copy {
+            from 'src/main/docker/run.sh'
+            into stageDir
+        }
     }
 }
 

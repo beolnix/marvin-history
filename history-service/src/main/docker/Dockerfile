@@ -1,5 +1,7 @@
 FROM java:8
 VOLUME /tmp
 ADD history-service-0.1.0.jar app.jar
-RUN bash -c 'touch /app.jar'
-ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-Dapi.key=$API_KEY","-Dapi.auth=$API_AUTH","-jar","/app.jar"]
+ADD run.sh run.sh
+ENV API_KEY api_key
+ENV API_AUTH api_auth
+ENTRYPOINT ["bash", "/run.sh"]
