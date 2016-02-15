@@ -12,11 +12,16 @@ import com.beolnix.marvin.history.messages.domain.dao.MessageDAO;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.http.client.support.HttpRequestWrapper;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,16 +36,13 @@ public class RestHelper {
     private final ChatDAO chatDAO;
     private final MessageDAO messageDAO;
     private final Integer port;
-
-    List<ClientHttpRequestInterceptor> interceptors = new ArrayList<ClientHttpRequestInterceptor>();
-
+    private final String baseUrl;
 
     public RestHelper(ChatDAO chatDAO, MessageDAO messageDAO, Integer port) {
         this.messageDAO = messageDAO;
         this.chatDAO = chatDAO;
         this.port = port;
-
-        interceptors.add(new HeaderRequestInterceptor("Accept",MediaType.APPLICATION_JSON_VALUE));
+        baseUrl = "http://localhost:"+port+"/api/v1/";
     }
 
     public void testRepository(ChatDTO chatDTO) {
@@ -54,20 +56,13 @@ public class RestHelper {
     }
 
     public ChatDTO getChatByName(String name) {
-
-
-        String baseUrl = "http://localhost:"+port+"/history";
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.setInterceptors(interceptors);
+        RestTemplate restTemplate = getRestTemplate();
         ResponseEntity<ChatDTO> result = restTemplate.getForEntity(baseUrl + "/chats/name/" + name, ChatDTO.class);
         return result.getBody();
     }
 
     public List<ChatDTO> getChats() {
-        String baseUrl = "http://localhost:"+port+"/history";
-
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.setInterceptors(interceptors);
+        RestTemplate restTemplate = getRestTemplate();
         ResponseEntity<List<ChatDTO>> chatsResponse =
                 restTemplate.exchange(baseUrl + "/chats", HttpMethod.GET, null, new ParameterizedTypeReference<List<ChatDTO>>() {
                 });
@@ -77,9 +72,7 @@ public class RestHelper {
 
     public ChatDTO createChat(String chatName) {
         // given
-        String baseUrl = "http://localhost:"+port+"/history";
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.setInterceptors(interceptors);
+        RestTemplate restTemplate = getRestTemplate();
         CreateChatDTO createChatDTO = new CreateChatDTO();
         createChatDTO.setConference(true);
         createChatDTO.setName(chatName);
@@ -102,9 +95,7 @@ public class RestHelper {
     }
 
     public MessageDTO createMessage(ChatDTO chatDTO) {
-        String baseUrl = "http://localhost:"+port+"/history";
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.setInterceptors(interceptors);
+        RestTemplate restTemplate = getRestTemplate();
         CreateMessageDTO createMessageDTO = new CreateMessageDTO();
         createMessageDTO.setAutor("testAutor");
         createMessageDTO.setChatId(chatDTO.getId());
@@ -138,9 +129,7 @@ public class RestHelper {
     }
 
     public Page<MessageDTO> getMessages(ChatDTO chatDTO) {
-        String baseUrl = "http://localhost:"+port+"/history";
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.setInterceptors(interceptors);
+        RestTemplate restTemplate = getRestTemplate();
         ResponseEntity<PageImplBean<MessageDTO>> response = restTemplate.exchange(
                 baseUrl + "/messages?chatId=" + chatDTO.getId(),
                 HttpMethod.GET,
@@ -152,9 +141,7 @@ public class RestHelper {
     }
 
     public Page<MessageDTO> getMessagesBackwardScroll(ChatDTO chatDTO, MessageDTO toMessage) {
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.setInterceptors(interceptors);
-        String baseUrl = "http://localhost:"+port+"/history";
+        RestTemplate restTemplate = getRestTemplate();
         ResponseEntity<PageImplBean<MessageDTO>> response = restTemplate.exchange(
                 baseUrl + "/messages?chatId=" + chatDTO.getId() + "&toMessageId=" + toMessage.getId(),
                 HttpMethod.GET,
@@ -162,5 +149,25 @@ public class RestHelper {
                 new ParameterizedTypeReference<PageImplBean<MessageDTO>>() {
                 });
         return response.getBody();
+    }
+
+    public RestTemplate getRestTemplate() {
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.setInterceptors(getHeaders());
+        return restTemplate;
+    }
+
+    public List<ClientHttpRequestInterceptor> getHeaders() {
+        List<ClientHttpRequestInterceptor> interceptors = new ArrayList<ClientHttpRequestInterceptor>();
+        interceptors.add(new ClientHttpRequestInterceptor() {
+            @Override
+            public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
+                HttpRequest wrapper = new HttpRequestWrapper(request);
+                wrapper.getHeaders().set("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+                wrapper.getHeaders().set("Accept", MediaType.APPLICATION_JSON_VALUE);
+                return execution.execute(wrapper, body);
+            }
+        });
+        return interceptors;
     }
 }

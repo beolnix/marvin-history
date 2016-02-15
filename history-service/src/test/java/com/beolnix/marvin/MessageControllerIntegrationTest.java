@@ -53,11 +53,8 @@ public class MessageControllerIntegrationTest {
     private RestHelper restHelper;
 
     private ChatDTO chatDTO;
-    List<ClientHttpRequestInterceptor> interceptors = new ArrayList<ClientHttpRequestInterceptor>();
 
-    public MessageControllerIntegrationTest() {
-        interceptors.add(new HeaderRequestInterceptor("Accept", MediaType.APPLICATION_JSON_VALUE));
-    }
+    private String baseUrl;
 
     @Before
     public void before() {
@@ -66,6 +63,7 @@ public class MessageControllerIntegrationTest {
 
         restHelper = new RestHelper(chatDAO, messageDAO, port);
         chatDTO = restHelper.createChat(CHAT_NAME);
+        baseUrl = "http://localhost:"+port+"/api/v1/";
     }
 
     @Test
@@ -79,9 +77,7 @@ public class MessageControllerIntegrationTest {
             restHelper.createMessage(chatDTO);
         }
 
-        String baseUrl = "http://localhost:"+port+"/history";
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.setInterceptors(interceptors);
+        RestTemplate restTemplate = restHelper.getRestTemplate();
         ResponseEntity<PageImplBean<MessageDTO>> response = restTemplate.exchange(baseUrl + "/messages?chatId=" + chatDTO.getId(),
                 HttpMethod.GET,
                 null,

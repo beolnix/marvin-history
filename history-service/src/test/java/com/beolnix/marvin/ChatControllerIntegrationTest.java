@@ -15,9 +15,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.boot.test.WebIntegrationTest;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.http.client.support.HttpRequestWrapper;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.client.RestTemplate;
 
@@ -25,6 +29,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,14 +49,12 @@ public class ChatControllerIntegrationTest {
 
     private String CHAT_NAME = "testChat";
     private RestHelper restHelper;
-    private List<ClientHttpRequestInterceptor> interceptors = new ArrayList<ClientHttpRequestInterceptor>();
 
-    public ChatControllerIntegrationTest() {
-        interceptors.add(new HeaderRequestInterceptor("Accept", MediaType.APPLICATION_JSON_VALUE));
-    }
+    private String baseUrl;
 
     @Before
     public void before() {
+        baseUrl = "http://localhost:"+port+"/api/v1/";
         chatDAO.deleteAll();
         restHelper = new RestHelper(chatDAO, messageDAO, port);
     }
@@ -59,9 +62,8 @@ public class ChatControllerIntegrationTest {
     @Test
     public void createChat() {
         // given
-        String baseUrl = "http://localhost:"+port+"/history";
         RestTemplate restTemplate = new RestTemplate();
-        restTemplate.setInterceptors(interceptors);
+        restTemplate.setInterceptors(restHelper.getHeaders());
         CreateChatDTO createChatDTO = new CreateChatDTO();
         createChatDTO.setConference(true);
         createChatDTO.setName(CHAT_NAME);
