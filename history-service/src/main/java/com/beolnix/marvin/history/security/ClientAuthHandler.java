@@ -28,11 +28,11 @@ public class ClientAuthHandler extends HandlerInterceptorAdapter {
     private Set<String> readAllowedMethods = Sets.newHashSet(HttpMethod.GET);
     private Set<String> writeAllowedMethods = Sets.newHashSet(HttpMethod.GET, HttpMethod.POST);
 
-    private Set<String> swaggerUrls = Sets.newHashSet("/v2/api-docs",
-            "/configuration/ui",
-            "/swagger-resources",
-            "/configuration/security",
-            "/webjars/springfox-swagger-ui",
+    private Set<String> swaggerUrls = Sets.newHashSet(
+            "/swagger/v2/api-docs",
+            "/v2/api-docs",
+            "/swagger",
+            "/webjars",
             "/error");
 
     @PostConstruct
