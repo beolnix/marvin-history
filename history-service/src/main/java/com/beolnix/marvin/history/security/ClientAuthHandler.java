@@ -28,6 +28,8 @@ public class ClientAuthHandler extends HandlerInterceptorAdapter {
     private Set<String> readAllowedMethods = Sets.newHashSet(HttpMethod.GET);
     private Set<String> writeAllowedMethods = Sets.newHashSet(HttpMethod.GET, HttpMethod.POST);
 
+    private Set<String> whiteListedUrl = Sets.newHashSet("/v2/api-docs");
+
     @PostConstruct
     private void init() {
         securityConfig.getAccessKeys().forEach(key ->
@@ -35,12 +37,14 @@ public class ClientAuthHandler extends HandlerInterceptorAdapter {
         );
     }
 
-
-
     //before the actual handler will be executed
     public boolean preHandle(HttpServletRequest request,
                              HttpServletResponse response, Object handler)
             throws Exception {
+
+        if (whiteListedUrl.contains(request.getRequestURI())) {
+            return true;
+        }
 
         String receivedApiKey = request.getHeader(Constants.API_KEY_HEADER);
         String receivedApiAuth = request.getHeader(Constants.API_AUTH_HEADER);
