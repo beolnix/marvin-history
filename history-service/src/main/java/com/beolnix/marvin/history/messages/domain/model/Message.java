@@ -16,7 +16,7 @@ public class Message {
 
     @Indexed
     private String chatId;
-    private String autor;
+    private String author;
 
     @Indexed
     private LocalDateTime timestamp;
@@ -38,12 +38,12 @@ public class Message {
         this.chatId = chatId;
     }
 
-    public String getAutor() {
-        return autor;
+    public String getAuthor() {
+        return author;
     }
 
-    public void setAutor(String autor) {
-        this.autor = autor;
+    public void setAuthor(String author) {
+        this.author = author;
     }
 
     public LocalDateTime getTimestamp() {

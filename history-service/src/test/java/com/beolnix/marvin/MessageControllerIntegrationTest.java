@@ -22,6 +22,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.client.RestTemplate;
 
@@ -38,6 +39,7 @@ import static org.junit.Assert.*;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = {Application.class})
 @WebIntegrationTest(randomPort = true)
+@ActiveProfiles("integration")
 public class MessageControllerIntegrationTest {
 
     @Value("${local.server.port}")
@@ -48,12 +50,6 @@ public class MessageControllerIntegrationTest {
 
     @Autowired
     private MessageDAO messageDAO;
-
-    @Value("${api.key}")
-    private String apiKey;
-
-    @Value("${api.auth}")
-    private String apiAuth;
 
     private String CHAT_NAME = "testChat";
     private RestHelper restHelper;
@@ -67,7 +63,7 @@ public class MessageControllerIntegrationTest {
         chatDAO.deleteAll();
         messageDAO.deleteAll();
 
-        restHelper = new RestHelper(chatDAO, messageDAO, port, apiKey, apiAuth);
+        restHelper = new RestHelper(chatDAO, messageDAO, port);
         chatDTO = restHelper.createChat(CHAT_NAME);
         baseUrl = "http://localhost:"+port+"/api/v1/";
     }
@@ -84,7 +80,7 @@ public class MessageControllerIntegrationTest {
         }
 
         RestTemplate restTemplate = restHelper.getRestTemplate();
-        ResponseEntity<PageImplBean<MessageDTO>> response = restTemplate.exchange(baseUrl + "/messages?chatId=" + chatDTO.getId(),
+        ResponseEntity<PageImplBean<MessageDTO>> response = restTemplate.exchange(baseUrl + "/chats/" + chatDTO.getId() + "/messages",
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<PageImplBean<MessageDTO>>() {

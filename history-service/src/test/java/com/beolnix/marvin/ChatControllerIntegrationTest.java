@@ -22,6 +22,7 @@ import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.support.HttpRequestWrapper;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.client.RestTemplate;
 
@@ -36,16 +37,11 @@ import java.util.List;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = {Application.class})
 @WebIntegrationTest(randomPort = true)
+@ActiveProfiles("integration")
 public class ChatControllerIntegrationTest {
 
     @Value("${local.server.port}")
     private Integer port;
-
-    @Value("${api.key}")
-    private String apiKey;
-
-    @Value("${api.auth}")
-    private String apiAuth;
 
     @Autowired
     private ChatDAO chatDAO;
@@ -62,7 +58,7 @@ public class ChatControllerIntegrationTest {
     public void before() {
         baseUrl = "http://localhost:"+port+"/api/v1/";
         chatDAO.deleteAll();
-        restHelper = new RestHelper(chatDAO, messageDAO, port, apiKey, apiAuth);
+        restHelper = new RestHelper(chatDAO, messageDAO, port);
     }
 
     @Test

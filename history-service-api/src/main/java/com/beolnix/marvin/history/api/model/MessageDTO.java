@@ -18,8 +18,8 @@ public class MessageDTO {
     @ApiModelProperty("Id of the Chat")
     private String chatId;
 
-    @ApiModelProperty("Message autor")
-    private String autor;
+    @ApiModelProperty("Message author")
+    private String author;
 
     @ApiModelProperty("Date and Time of the message")
     private LocalDateTime timestamp;
@@ -43,12 +43,12 @@ public class MessageDTO {
         this.chatId = chatId;
     }
 
-    public String getAutor() {
-        return autor;
+    public String getAuthor() {
+        return author;
     }
 
-    public void setAutor(String autor) {
-        this.autor = autor;
+    public void setAuthor(String author) {
+        this.author = author;
     }
 
     public LocalDateTime getTimestamp() {

@@ -1,8 +1,12 @@
 package com.beolnix.marvin.history.messages;
 
+import com.beolnix.marvin.history.api.model.ChatDTO;
 import com.beolnix.marvin.history.api.model.CreateMessageDTO;
 import com.beolnix.marvin.history.api.model.MessageDTO;
+import com.beolnix.marvin.history.chats.domain.dao.ChatDAO;
+import com.beolnix.marvin.history.chats.domain.model.Chat;
 import com.beolnix.marvin.history.error.BadRequest;
+import com.beolnix.marvin.history.error.NotFound;
 import com.beolnix.marvin.history.messages.domain.model.Message;
 import com.beolnix.marvin.history.messages.domain.dao.MessageDAO;
 import org.springframework.beans.BeanUtils;
@@ -12,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -22,20 +27,37 @@ import java.util.stream.Collectors;
 public class MessageService {
 
     private final MessageDAO messageDAO;
+    private final ChatDAO chatDAO;
     private final Sort descSortByTimestamp = new Sort(new Sort.Order(Sort.Direction.DESC, "timestamp"));
 
     @Autowired
-    public MessageService(MessageDAO messageDAO) {
+    public MessageService(MessageDAO messageDAO, ChatDAO chatDAO) {
         this.messageDAO = messageDAO;
+        this.chatDAO = chatDAO;
     }
 
-    public MessageDTO createMessate(CreateMessageDTO createMessageDTO) {
+    public MessageDTO createMessate(String chatId, CreateMessageDTO createMessageDTO) {
+        validateChatId(chatId);
+
+        Message newMessage = convert(chatId, createMessageDTO);
+        Message savedMessage = messageDAO.save(newMessage);
+
+        return convert(savedMessage);
+    }
+
+    private void validateChatId(String chatId) {
+        Chat chat = chatDAO.findOne(chatId);
+        if (chat == null) {
+            throw new NotFound("Chat with id: " + chatId + " hasn't been found");
+        }
+    }
+
+    private Message convert(String chatId, CreateMessageDTO createMessageDTO) {
         Message message = new Message();
         BeanUtils.copyProperties(createMessageDTO, message);
         message.setTimestamp(LocalDateTime.now());
-        Message savedMessage = messageDAO.save(message);
-
-        return convert(savedMessage);
+        message.setChatId(chatId);
+        return message;
     }
 
     public Page<MessageDTO> getMessages(String chatId,

@@ -4,9 +4,8 @@ history:
     - mongodb
   ports:
     - 8087:8080
-  environment:
-    - API_KEY:API_KEY
-    - API_AUTH:API_AUTH
+  volumes:
+    - ./application.yml:/application.yml
 mongodb:
   image: mongo:3.2
   ports:

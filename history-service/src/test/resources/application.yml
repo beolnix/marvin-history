@@ -1,5 +1,17 @@
+---
+spring:
+  profiles: integration
+
 history.mongo.host: localhost
 history.mongo.database: historyIntTest
 
-api.key: key
-api.auth: auth
+history.api.security:
+  accessKeys:
+    - key: 'test_read_key'
+      auth: 'test_read_auth'
+      roles:
+        - 'read'
+    - key: 'test_write_key'
+      auth: 'test_write_auth'
+      roles:
+        - 'write'

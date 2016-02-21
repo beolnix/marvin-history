@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,7 +29,7 @@ public class MessageController implements MessageApi {
     }
 
     @Override
-    public Page<MessageDTO> getMessages(@RequestParam(value = "chatId", required = true) String chatId,
+    public Page<MessageDTO> getMessages(@PathVariable(value = "chatId") String chatId,
 
                                         @RequestParam(value = "toMessageId", required = false) String toMessageId,
 
@@ -45,7 +46,7 @@ public class MessageController implements MessageApi {
     }
 
     @Override
-    public MessageDTO createMessate(@RequestBody CreateMessageDTO createMessageDTO) {
-        return messageService.createMessate(createMessageDTO);
+    public MessageDTO createMessate(@PathVariable("chatId") String chatId, @RequestBody CreateMessageDTO createMessageDTO) {
+        return messageService.createMessate(chatId, createMessageDTO);
     }
 }

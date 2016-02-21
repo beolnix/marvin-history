@@ -9,10 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,7 +24,7 @@ public interface MessageApi {
     @ApiImplicitParams({
             @ApiImplicitParam(value = "size of the page", name = "size", defaultValue = "10", dataType = "int", required = false, paramType = "query"),
             @ApiImplicitParam(value = "number of the page", name = "page", defaultValue = "0", dataType = "int", required = false, paramType = "query"),
-            @ApiImplicitParam(value = "Id of the chat", name="chatId", required = true, dataType = "string", paramType = "query"),
+            @ApiImplicitParam(value = "Id of the chat", name="chatId", required = true, dataType = "string", paramType = "path"),
             @ApiImplicitParam(value = "Method will filter out messages with id greater then given",
                     name="toMessageId", dataType = "string", required = false, paramType = "query"),
             @ApiImplicitParam(value = "Method will filter out messages older then given date. Format=yyyy-MM-dd'T'HH:mm:ss.SSSZ",
@@ -38,8 +35,8 @@ public interface MessageApi {
     @ApiParam(value = "Message id limit. Method will return messages with id less then given",
             name="toMessageId",
             required = false)
-    @RequestMapping(method = RequestMethod.GET, value = "/messages", produces = MediaType.APPLICATION_JSON_VALUE)
-    Page<MessageDTO> getMessages(@RequestParam(value = "chatId", required = true) String chatId,
+    @RequestMapping(method = RequestMethod.GET, value = "/chats/{chatId}/messages", produces = MediaType.APPLICATION_JSON_VALUE)
+    Page<MessageDTO> getMessages(@PathVariable(value = "chatId") String chatId,
                                  @RequestParam(value = "toMessageId", required = false) String toMessageId,
 
                                  @RequestParam(value = "fromDateTime", required = false)
@@ -55,6 +52,11 @@ public interface MessageApi {
 
 
     @ApiOperation(value = "Method creates new message based on provided model", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    @RequestMapping(method = RequestMethod.POST, value = "/messages", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    MessageDTO createMessate(@RequestBody CreateMessageDTO createMessageDTO);
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "Id of the chat", name="chatId", required = true, dataType = "string", paramType = "path"),
+    })
+    @ApiResponses(value = { @ApiResponse(code = 404, message = "Chat not found") })
+    @RequestMapping(method = RequestMethod.POST, value = "/chats/{chatId}/messages", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    MessageDTO createMessate(@PathVariable("chatId") String chatId,
+                             @RequestBody CreateMessageDTO createMessageDTO);
 }

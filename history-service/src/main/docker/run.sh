@@ -1,2 +1,2 @@
-#!/usr/bin/bash
-java -Djava.security.egd=file:/dev/./urandom -Dapi.key=$API_KEY -Dapi.auth=$API_AUTH -jar /app.jar
+#!/usr/bin/env bash
+java -Djava.security.egd=file:/dev/./urandom -Dspring.profiles.active=prod -Dspring.config.location="file:/application.yml" -jar /app.jar

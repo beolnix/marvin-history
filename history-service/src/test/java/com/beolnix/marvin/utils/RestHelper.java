@@ -38,16 +38,12 @@ public class RestHelper {
     private final MessageDAO messageDAO;
     private final Integer port;
     private final String baseUrl;
-    private final String apiKey;
-    private final String apiAuth;
 
-    public RestHelper(ChatDAO chatDAO, MessageDAO messageDAO, Integer port, String apiKey, String apiAuth) {
+    public RestHelper(ChatDAO chatDAO, MessageDAO messageDAO, Integer port) {
         this.messageDAO = messageDAO;
         this.chatDAO = chatDAO;
         this.port = port;
         this.baseUrl = "http://localhost:"+port+"/api/v1/";
-        this.apiKey = apiKey;
-        this.apiAuth = apiAuth;
     }
 
     public void testRepository(ChatDTO chatDTO) {
@@ -102,19 +98,18 @@ public class RestHelper {
     public MessageDTO createMessage(ChatDTO chatDTO) {
         RestTemplate restTemplate = getRestTemplate();
         CreateMessageDTO createMessageDTO = new CreateMessageDTO();
-        createMessageDTO.setAutor("testAutor");
-        createMessageDTO.setChatId(chatDTO.getId());
+        createMessageDTO.setAuthor("testAutor");
         createMessageDTO.setMsg("testMsg");
 
-        ResponseEntity<MessageDTO> result = restTemplate.postForEntity(baseUrl + "/messages",
+        ResponseEntity<MessageDTO> result = restTemplate.postForEntity(baseUrl + "chats/" +chatDTO.getId()+ "/messages",
                 createMessageDTO, MessageDTO.class);
 
         MessageDTO messageDTO = result.getBody();
 
         assertNotNull(messageDTO);
         assertNotNull(messageDTO.getId());
-        assertEquals(createMessageDTO.getAutor(), messageDTO.getAutor());
-        assertEquals(createMessageDTO.getChatId(), messageDTO.getChatId());
+        assertEquals(createMessageDTO.getAuthor(), messageDTO.getAuthor());
+        assertEquals(chatDTO.getId(), messageDTO.getChatId());
         assertEquals(createMessageDTO.getMsg(), messageDTO.getMsg());
 
         testRepository(messageDTO);
@@ -129,14 +124,14 @@ public class RestHelper {
         assertEquals(messageDTO.getId(), message.getId());
         assertEquals(message.getChatId(), messageDTO.getChatId());
         assertEquals(message.getTimestamp(), messageDTO.getTimestamp());
-        assertEquals(message.getAutor(), messageDTO.getAutor());
+        assertEquals(message.getAuthor(), messageDTO.getAuthor());
         assertEquals(message.getMsg(), messageDTO.getMsg());
     }
 
     public Page<MessageDTO> getMessages(ChatDTO chatDTO) {
         RestTemplate restTemplate = getRestTemplate();
         ResponseEntity<PageImplBean<MessageDTO>> response = restTemplate.exchange(
-                baseUrl + "/messages?chatId=" + chatDTO.getId(),
+                baseUrl +"/chats/" + chatDTO.getId() + "/messages",
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<PageImplBean<MessageDTO>>() {
@@ -148,7 +143,7 @@ public class RestHelper {
     public Page<MessageDTO> getMessagesBackwardScroll(ChatDTO chatDTO, MessageDTO toMessage) {
         RestTemplate restTemplate = getRestTemplate();
         ResponseEntity<PageImplBean<MessageDTO>> response = restTemplate.exchange(
-                baseUrl + "/messages?chatId=" + chatDTO.getId() + "&toMessageId=" + toMessage.getId(),
+                baseUrl +"/chats/" +chatDTO.getId()+ "/messages?toMessageId=" + toMessage.getId(),
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<PageImplBean<MessageDTO>>() {
@@ -158,11 +153,11 @@ public class RestHelper {
 
     public RestTemplate getRestTemplate() {
         RestTemplate restTemplate = new RestTemplate();
-        restTemplate.setInterceptors(getHeaders());
+        restTemplate.setInterceptors(getWriteHeaders());
         return restTemplate;
     }
 
-    public List<ClientHttpRequestInterceptor> getHeaders() {
+    public List<ClientHttpRequestInterceptor> getWriteHeaders() {
         List<ClientHttpRequestInterceptor> interceptors = new ArrayList<ClientHttpRequestInterceptor>();
         interceptors.add(new ClientHttpRequestInterceptor() {
             @Override
@@ -170,8 +165,8 @@ public class RestHelper {
                 HttpRequest wrapper = new HttpRequestWrapper(request);
                 wrapper.getHeaders().set("Content-Type", MediaType.APPLICATION_JSON_VALUE);
                 wrapper.getHeaders().set("Accept", MediaType.APPLICATION_JSON_VALUE);
-                wrapper.getHeaders().set(Constants.API_KEY_HEADER, apiKey);
-                wrapper.getHeaders().set(Constants.API_AUTH_HEADER, apiAuth);
+                wrapper.getHeaders().set(Constants.API_KEY_HEADER, "test_write_key");
+                wrapper.getHeaders().set(Constants.API_AUTH_HEADER, "test_write_auth");
                 return execution.execute(wrapper, body);
             }
         });

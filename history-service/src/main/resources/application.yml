@@ -1,3 +1,7 @@
+---
+spring:
+  profiles: dev
+
 history.mongo.host: deploy_mongodb_1
 history.mongo.database: history
 history.hostname: history.buildloft.com
