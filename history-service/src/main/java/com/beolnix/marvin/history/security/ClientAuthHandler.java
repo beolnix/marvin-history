@@ -28,7 +28,12 @@ public class ClientAuthHandler extends HandlerInterceptorAdapter {
     private Set<String> readAllowedMethods = Sets.newHashSet(HttpMethod.GET);
     private Set<String> writeAllowedMethods = Sets.newHashSet(HttpMethod.GET, HttpMethod.POST);
 
-    private Set<String> whiteListedUrl = Sets.newHashSet("/v2/api-docs");
+    private Set<String> swaggerUrls = Sets.newHashSet("/v2/api-docs",
+            "/configuration/ui",
+            "/swagger-resources",
+            "/configuration/security",
+            "/webjars/springfox-swagger-ui",
+            "/error");
 
     @PostConstruct
     private void init() {
@@ -42,7 +47,9 @@ public class ClientAuthHandler extends HandlerInterceptorAdapter {
                              HttpServletResponse response, Object handler)
             throws Exception {
 
-        if (whiteListedUrl.contains(request.getRequestURI())) {
+        // allow swagger
+        String requestURI = request.getRequestURI();
+        if (isItSwagger(requestURI)) {
             return true;
         }
 
@@ -58,6 +65,16 @@ public class ClientAuthHandler extends HandlerInterceptorAdapter {
         }
 
         throw new Unauthorized();
+    }
+
+    private boolean isItSwagger(String requestURI) {
+        for (String whiteUrl : swaggerUrls) {
+            if (requestURI.startsWith(whiteUrl)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private boolean isAllowed(HttpServletRequest request, AccessKey accessKey) {
