@@ -21,7 +21,7 @@ public class MessageDTO {
     @ApiModelProperty("Message author")
     private String author;
 
-    @ApiModelProperty("Date and Time of the message")
+    @ApiModelProperty(value = "Date and Time of the message", dataType = "LocalDateTime", example = "2016-02-15T07:42:11.626")
     private LocalDateTime timestamp;
 
     @ApiModelProperty("Text of the message")

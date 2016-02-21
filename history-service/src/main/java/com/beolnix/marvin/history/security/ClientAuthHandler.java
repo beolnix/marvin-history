@@ -29,11 +29,13 @@ public class ClientAuthHandler extends HandlerInterceptorAdapter {
     private Set<String> writeAllowedMethods = Sets.newHashSet(HttpMethod.GET, HttpMethod.POST);
 
     private Set<String> swaggerUrls = Sets.newHashSet(
-            "/swagger/v2/api-docs",
             "/v2/api-docs",
             "/swagger",
             "/webjars",
-            "/error");
+            "/error",
+            "/v2/api-docs",
+            "/configuration",
+            "/validator");
 
     @PostConstruct
     private void init() {
@@ -48,7 +50,7 @@ public class ClientAuthHandler extends HandlerInterceptorAdapter {
             throws Exception {
 
         // allow swagger
-        String requestURI = request.getRequestURI();
+        String requestURI = request.getRequestURI().replace("//", "/");
         if (isItSwagger(requestURI)) {
             return true;
         }
