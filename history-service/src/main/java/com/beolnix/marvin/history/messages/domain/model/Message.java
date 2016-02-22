@@ -22,6 +22,17 @@ public class Message {
     private LocalDateTime timestamp;
     private String msg;
 
+    public Message() {
+    }
+
+    public Message(String id, String chatId, String author, LocalDateTime timestamp, String msg) {
+        this.id = id;
+        this.chatId = chatId;
+        this.author = author;
+        this.timestamp = timestamp;
+        this.msg = msg;
+    }
+
     public String getId() {
         return id;
     }
