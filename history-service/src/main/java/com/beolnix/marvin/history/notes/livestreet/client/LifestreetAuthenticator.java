@@ -18,6 +18,7 @@ import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StreamUtils;
@@ -46,6 +47,7 @@ public class LifestreetAuthenticator {
     private String password;
     private final AuthExtractor authExtractor;
 
+    @Autowired
     public LifestreetAuthenticator(AuthExtractor authExtractor) {
         this.authExtractor = authExtractor;
     }
