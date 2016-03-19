@@ -1,12 +1,11 @@
 package com.beolnix.marvin;
 
+import com.beolnix.marvin.adapters.PageImplBean;
 import com.beolnix.marvin.history.Application;
 import com.beolnix.marvin.history.api.model.ChatDTO;
 import com.beolnix.marvin.history.api.model.MessageDTO;
 import com.beolnix.marvin.history.chats.domain.dao.ChatDAO;
 import com.beolnix.marvin.history.messages.domain.dao.MessageDAO;
-import com.beolnix.marvin.adapters.PageImplBean;
-import com.beolnix.marvin.utils.HeaderRequestInterceptor;
 import com.beolnix.marvin.utils.RestHelper;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,15 +18,11 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
@@ -113,7 +108,7 @@ public class MessageControllerIntegrationTest {
 
         // there must be 20 messages older then the oldest from the initial request
         assertNotNull(page);
-        assertEquals(20, page.getContent().size());
+        assertEquals(19, page.getContent().size());
 
         Optional<MessageDTO> messageAfter = page.getContent().stream()
                 .filter(m -> m.getTimestamp().isAfter(toMessage.getTimestamp()))

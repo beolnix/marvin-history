@@ -1,14 +1,13 @@
 package com.beolnix.marvin.history.messages;
 
-import com.beolnix.marvin.history.api.model.ChatDTO;
 import com.beolnix.marvin.history.api.model.CreateMessageDTO;
 import com.beolnix.marvin.history.api.model.MessageDTO;
 import com.beolnix.marvin.history.chats.domain.dao.ChatDAO;
 import com.beolnix.marvin.history.chats.domain.model.Chat;
 import com.beolnix.marvin.history.error.BadRequest;
 import com.beolnix.marvin.history.error.NotFound;
-import com.beolnix.marvin.history.messages.domain.model.Message;
 import com.beolnix.marvin.history.messages.domain.dao.MessageDAO;
+import com.beolnix.marvin.history.messages.domain.model.Message;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -91,7 +89,13 @@ public class MessageService {
         Message message = messageDAO.findOneByChatIdAndId(chatId, toMessageId);
         LocalDateTime toDateTime = message.getTimestamp();
         Page<Message> page = messageDAO.findByChatIdAndTimestampLessThanEqual(chatId, toDateTime, pageable);
-        return convert(page, pageable);
+
+        List<MessageDTO> entities = page.getContent().stream()
+                .filter(msg -> !msg.getId().equals(toMessageId))
+                .map(this::convert)
+                .collect(Collectors.toList());
+
+        return new PageImpl<MessageDTO>(entities, pageable, page.getTotalPages());
     }
 
     private Pageable prepareDESCSort(Pageable pageable) {
