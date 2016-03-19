@@ -87,7 +87,7 @@ public class PHPClient {
         nvps.add(new BasicNameValuePair("topic_text", preparePostBody(note)));
         nvps.add(new BasicNameValuePair("submit_topic_publish", ""));
 
-        httppost.setEntity(new UrlEncodedFormEntity(nvps));
+        httppost.setEntity(new UrlEncodedFormEntity(nvps, "UTF-8"));
         CloseableHttpResponse response = httpclient.execute(httppost, context);
     }
 
