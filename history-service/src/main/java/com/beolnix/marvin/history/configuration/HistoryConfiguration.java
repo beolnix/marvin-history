@@ -2,6 +2,7 @@ package com.beolnix.marvin.history.configuration;
 
 import com.beolnix.marvin.history.configuration.converter.DateToLocalDateTimeConverter;
 import com.beolnix.marvin.history.configuration.converter.LocalDateTimeToDateConverter;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
@@ -52,6 +53,7 @@ public class HistoryConfiguration extends AbstractMongoConfiguration {
         objectMapper.configure(com.fasterxml.jackson.databind.SerializationFeature.
                 WRITE_DATES_AS_TIMESTAMPS , false);
         objectMapper.getSerializationConfig().with(new ISO8601DateFormat());
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         return objectMapper;
     }
 
