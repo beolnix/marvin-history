@@ -20,6 +20,7 @@ import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StreamUtils;
 
@@ -47,13 +48,21 @@ public class LifestreetAuthenticator {
     private String password;
     private final AuthExtractor authExtractor;
 
+    private final int AUTH_RESET_PERIOD = 60 * 10000;   // reset auth every 10 min
+
     @Autowired
     public LifestreetAuthenticator(AuthExtractor authExtractor) {
         this.authExtractor = authExtractor;
     }
 
+    @Scheduled(fixedDelay = AUTH_RESET_PERIOD)
     public void resetAuth() {
-        authDTO = null;
+        lock.lock();
+        try {
+            authDTO = null;
+        } finally {
+            lock.unlock();
+        }
     }
 
     public AuthDTO setupAuthContext() throws Exception {
